@@ -16,9 +16,22 @@ async function restoreWorkspace(){try{const saved=await dbGet('current');if(!sav
 function notify(m){const e=$('toast');e.textContent=m;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),2400)}
 function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function parseQuestions(raw){
- const blocks=raw.replace(/^\uFEFF/,'').split(/^\s*#\s*/m).map(s=>s.trim()).filter(Boolean),parsed=[];
- for(let i=0;i+2<blocks.length;i+=3){const qb=blocks[i],ab=blocks[i+1],ex=blocks[i+2],lines=qb.split(/\r?\n/).map(s=>s.trim()).filter(Boolean),ol=lines.filter(l=>/^[A-Da-d][.)、:：-]\s*/.test(l)),ql=lines.filter(l=>!/^[A-Da-d][.)、:：-]\s*/.test(l)),options=ol.map(l=>{const m=l.match(/^([A-Da-d])[.)、:：-]\s*(.*)$/);return{key:m[1].toUpperCase(),text:m[2]}}),am=ab.match(/(?:^|\s)([A-Da-d])(?:\s|$|[.)、])/),answer=am?am[1].toUpperCase():ab.trim().replace(/[^A-Da-d]/g,'').slice(0,1).toUpperCase();
- if(ql.length&&options.length&&/^[A-D]$/.test(answer))parsed.push({question:ql.join('\n'),options,answer,explanation:ex,timestamps:[null,null,null]});}
+ const text=String(raw||'').replace(/^\\uFEFF/,'').replace(/\\r/g,'');
+ // Split on standalone heading/separator lines beginning with #; keep every non-empty block.
+ const blocks=text.split(/^\\s*#\\s*$/m).map(x=>x.trim()).filter(Boolean);
+ const parsed=[];
+ for(let i=0;i+2<blocks.length;i+=3){
+   const qb=blocks[i],ab=blocks[i+1],ex=blocks[i+2];
+   const lines=qb.split(/\\n/).map(x=>x.trim()).filter(Boolean);
+   const optionPattern=/^([A-D])[.)、:：-]\\s*(.+)$/i;
+   const options=lines.map(line=>line.match(optionPattern)).filter(Boolean).map(m=>({key:m[1].toUpperCase(),text:m[2].trim()}));
+   const qLines=lines.filter(line=>!optionPattern.test(line));
+   const answerMatch=String(ab).match(/(?:उत्तर|answer)?\\s*[:：-]?\\s*([A-D])\\b/i);
+   const answer=answerMatch?answerMatch[1].toUpperCase():'';
+   if(qLines.length&&options.length>=2&&/^[A-D]$/.test(answer)&&options.some(o=>o.key===answer)){
+     parsed.push({question:qLines.join(' '),options,answer,explanation:ex.replace(/^#+\\s*/,'').trim(),timestamps:[null,null,null]});
+   }
+ }
  return parsed;
 }
 function fingerprint(raw){let hash=2166136261;for(let i=0;i<raw.length;i++){hash^=raw.charCodeAt(i);hash=Math.imul(hash,16777619)}return' mcqstudio-sync-'+(hash>>>0)}
@@ -54,8 +67,8 @@ function syncTick(){if(!audio.src||!$('autoSync').checked)return;const t=audio.c
  const ev=allEvents().filter(e=>e.time<=t+0.02);if(!ev.length)return;const target=ev[ev.length-1];if(target.index!==state.index||target.stage!==state.stage){state.index=target.index;state.stage=target.stage;render()}}
 function toggleFullscreen(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.().catch(()=>notify('Fullscreen उपलब्ध नहीं है'));else document.exitFullscreen?.()}
 function togglePresentation(){state.presentationMode=!state.presentationMode;document.body.classList.toggle('presentation-mode',state.presentationMode);if(state.presentationMode&&!document.fullscreenElement)document.documentElement.requestFullscreen?.().catch(()=>{});if(!state.presentationMode&&document.fullscreenElement)document.exitFullscreen?.()}
-$('loadBtn').addEventListener('click',()=>loadQuestions($('questionInput').value));$('textFile').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;const txt=await f.text();$('questionInput').value=txt;loadQuestions(txt)});
-$('audioFile').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;if(state.audioUrl)URL.revokeObjectURL(state.audioUrl);state.audioBlob=f;state.audioUrl=URL.createObjectURL(f);audio.src=state.audioUrl;audio.load();$('audioName').textContent=f.name;notify('Continuous audio track loaded');saveWorkspaceSoon();updateAudioUI();if($('autoplay').checked)audio.play().then(updatePlayButton).catch(()=>notify('Audio playback के लिए Play दबाएँ'))});
+$('loadBtn').addEventListener('click',()=>{const raw=$('questionInput').value;const ok=loadQuestions(raw);if(ok)saveWorkspaceSoon()});$('textFile').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const txt=await file.text();$('questionInput').value=txt;loadQuestions(txt)}catch(err){console.error(err);notify('File पढ़ नहीं पाए')}e.target.value=''});
+const audioInput=$('audioFile');audioInput.addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;try{if(state.audioUrl)URL.revokeObjectURL(state.audioUrl);state.audioBlob=file;state.audioUrl=URL.createObjectURL(file);audio.src=state.audioUrl;audio.load();$('audioName').textContent=file.name;notify('Continuous audio track loaded');saveWorkspaceSoon();updateAudioUI();if($('autoplay').checked)audio.play().then(updatePlayButton).catch(()=>notify('Audio playback के लिए Play दबाएँ'))}catch(err){console.error('Audio file setup failed',err);notify('Audio file load नहीं हो सकी')}e.target.value=''});
 $('prevBtn').addEventListener('click',()=>go(-1));$('nextBtn').addEventListener('click',()=>go(1));$('prevZone').addEventListener('click',()=>go(-1));$('nextZone').addEventListener('click',()=>go(1));
 document.querySelectorAll('.stage-tab').forEach(b=>b.addEventListener('click',()=>{if(!state.questions.length)return;state.stage=Number(b.dataset.stage);saveWorkspaceSoon();state.manualHold=true;state.holdUntil=nextTimestampAfter(audio.currentTime);render()}));
 $('playBtn').addEventListener('click',()=>{if(!audio.src){notify('पहले एक continuous audio track upload करें');return}if(audio.paused)audio.play().then(updatePlayButton).catch(()=>notify('Audio play नहीं हो सका'));else audio.pause();updatePlayButton()});
