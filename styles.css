@@ -34,3 +34,23 @@
 .presentation.answer-reveal .question-kicker,.presentation.answer-reveal .question-text,.presentation.answer-reveal .options-grid .option{animation:none!important}
 .presentation.answer-reveal .option.correct{animation:mcqCorrectGlow 1.1s ease-out both!important}
 .presentation.answer-reveal .answer-banner{animation:mcqAnswer .65s cubic-bezier(.18,.72,.25,1) both}
+
+/* Question navigation, scalable 16:9 canvas and typography controls */
+.canvas-layout{display:flex;align-items:flex-start;gap:14px;min-width:0}
+.canvas-layout .preview-wrap{flex:1 1 0;min-width:260px}
+.question-jump-panel{width:150px;flex:0 0 150px;max-height:calc(100vw * .5);overflow:auto;border:1px solid var(--line);border-radius:12px;background:#0d1b31;padding:12px}
+.question-number-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.question-number-grid button{border:1px solid #314966;background:#152943;color:#d1e1f8;border-radius:7px;padding:7px 2px;font-size:10px;cursor:pointer}
+.question-number-grid button:hover{background:#294b77}
+.question-number-grid button.active{background:#3979e5;border-color:#70a0ff;color:white;font-weight:800}
+.canvas-resize-handle{position:absolute;right:5px;bottom:5px;z-index:4;width:23px;height:23px;border-radius:6px;background:#285284d9;border:1px solid #80a9dd;cursor:nwse-resize;display:grid;place-items:center;color:white;font-size:12px;touch-action:none}
+.canvas-controls{display:flex;align-items:center;gap:7px;margin:8px 0;color:#91a3bd;font-size:10px}
+.canvas-controls button{background:#132945;border:1px solid #395779;color:#dce8fa;border-radius:6px;padding:5px 9px;cursor:pointer}
+.resize-hint{margin-left:auto;font-size:9px;color:#7186a5}
+.presentation{--font-scale:1}
+.question-text{font-size:calc(clamp(19px,2.35vw,43px) * var(--font-scale))}
+.option{font-size:calc(clamp(13px,1.4vw,25px) * var(--font-scale))}
+.explanation-text{font-size:calc(clamp(17px,2vw,36px) * var(--font-scale))}
+@media(max-width:850px){.canvas-layout{flex-direction:column}.question-jump-panel{width:100%;flex-basis:auto;max-height:160px}.question-number-grid{grid-template-columns:repeat(8,minmax(0,1fr))}}
+@media(max-width:650px){.question-number-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.resize-hint{display:none}}
+body.presentation-mode .question-jump-panel,body.presentation-mode .canvas-controls{display:none}
