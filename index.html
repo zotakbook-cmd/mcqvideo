@@ -38,10 +38,12 @@
       <label class="file-row"><span class="file-symbol">♫</span><span><b>Continuous audio track</b><small id="audioName">No file selected</small></span><input id="audioFile" type="file" accept="audio/*"></label>
 
       <div class="sidebar-divider"></div>
+      <div id="timelinePanel"></div>
+      <div class="sidebar-divider"></div>
       <div class="section-heading"><span>PLAYBACK</span></div>
       <div class="setting-row"><span>Auto play audio</span><label class="switch"><input type="checkbox" id="autoplay" checked><i></i></label></div>
       <div class="setting-row"><span>Show progress bar</span><label class="switch"><input type="checkbox" id="showProgress" checked><i></i></label></div>
-      <div class="audio-note">Continuous audio playback: navigation से audio interrupt नहीं होगा। आगे AI alignment timestamps से text को audio के समय के अनुसार automatically sync किया जाएगा।</div>
+      <div class="setting-row"><span>Auto Sync (saved timestamps)</span><label class="switch"><input type="checkbox" id="autoSync" checked><i></i></label></div><div class="audio-note">Timestamp सेट होने पर Stage स्वतः बदलेगा। Timestamp नहीं होने पर Next/Previous से आगे बढ़ें। Audio uninterrupted रहेगा।</div>
     </aside>
 
     <section class="main-panel">
