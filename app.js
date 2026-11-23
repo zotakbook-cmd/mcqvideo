@@ -16,20 +16,19 @@ async function restoreWorkspace(){try{const saved=await dbGet('current');if(!sav
 function notify(m){const e=$('toast');e.textContent=m;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),2400)}
 function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function parseQuestions(raw){
- const text=String(raw||'').replace(/^\\uFEFF/,'').replace(/\\r/g,'');
- // Split on standalone heading/separator lines beginning with #; keep every non-empty block.
- const blocks=text.split(/(?:^|\\n)[ \\t]*#[ \\t]*/).map(x=>x.trim()).filter(Boolean);
+ const text=String(raw||'').replace(/^\uFEFF/,'').replace(/\r/g,'');
+ const blocks=text.split(/(?:^|\n)[ \t]*#[ \t]*/).map(x=>x.trim()).filter(Boolean);
  const parsed=[];
  for(let i=0;i+2<blocks.length;i+=3){
    const qb=blocks[i],ab=blocks[i+1],ex=blocks[i+2];
-   const lines=qb.split(/\\n/).map(x=>x.trim()).filter(Boolean);
-   const optionPattern=/^([A-D])[.)、:：-]\\s*(.+)$/i;
+   const lines=qb.split(/\n/).map(x=>x.trim()).filter(Boolean);
+   const optionPattern=/^([A-D])[.)、:：-]\s*(.+)$/i;
    const options=lines.map(line=>line.match(optionPattern)).filter(Boolean).map(m=>({key:m[1].toUpperCase(),text:m[2].trim()}));
    const qLines=lines.filter(line=>!optionPattern.test(line));
-   const answerMatch=String(ab).match(/(?:उत्तर|answer)?\\s*[:：-]?\\s*([A-D])\\b/i);
+   const answerMatch=String(ab).match(/(?:उत्तर|answer)?\s*[:：-]?\s*([A-D])\b/i);
    const answer=answerMatch?answerMatch[1].toUpperCase():'';
    if(qLines.length&&options.length>=2&&/^[A-D]$/.test(answer)&&options.some(o=>o.key===answer)){
-     parsed.push({question:qLines.join(' '),options,answer,explanation:ex.replace(/^#+\\s*/,'').trim(),timestamps:[null,null,null]});
+     parsed.push({question:qLines.join(' '),options,answer,explanation:ex.trim(),timestamps:[null,null,null]});
    }
  }
  return parsed;
