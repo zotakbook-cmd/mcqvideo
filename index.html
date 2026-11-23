@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071326">
+<title>MCQ Studio — Video Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">M</span><span>MCQ<span class="brand-light"> Studio</span><small>VIDEO PRESENTATION</small></span></a>
+    <div class="top-actions">
+      <span class="status-dot"></span><span class="status-label">Local workspace</span>
+      <button class="btn btn-quiet" id="fullscreenBtn" title="Fullscreen (F)">⛶ <span>Fullscreen</span></button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar">
+      <div class="section-heading"><span>WORKSPACE</span><span class="tiny-pill">V1.0</span></div>
+      <label class="upload-box" for="textFile">
+        <span class="upload-icon">↑</span><strong>Import Question File</strong>
+        <small>.txt / .json / .md — # separated format</small>
+        <input id="textFile" type="file" accept=".txt,.json,.md,text/plain,application/json">
+      </label>
+      <div class="field-label">OR PASTE QUESTIONS</div>
+      <textarea id="questionInput" spellcheck="false" placeholder="# भारत का संविधान कब लागू हुआ?&#10;A. 15 अगस्त 1947&#10;B. 26 जनवरी 1950&#10;C. 26 नवंबर 1949&#10;D. 2 अक्टूबर 1950&#10;&#10;# B&#10;&#10;# भारतीय संविधान 26 नवंबर 1949 को अंगीकृत किया गया था, लेकिन इसे 26 जनवरी 1950 को लागू किया गया।"></textarea>
+      <button class="btn btn-primary full" id="loadBtn">Load Questions <span>→</span></button>
+
+      <div class="sidebar-divider"></div>
+      <div class="section-heading"><span>AUDIO FILES</span><span class="optional">OPTIONAL</span></div>
+      <div class="audio-help">हर प्रश्न के लिए Question, Answer और Explanation audio चुनें। ये फाइलें इसी browser session में इस्तेमाल होंगी।</div>
+      <label class="file-row"><span class="file-symbol">♫</span><span><b>Question audio</b><small id="qAudioName">No file selected</small></span><input id="qAudio" type="file" accept="audio/*"></label>
+      <label class="file-row"><span class="file-symbol">✓</span><span><b>Answer audio</b><small id="aAudioName">No file selected</small></span><input id="aAudio" type="file" accept="audio/*"></label>
+      <label class="file-row"><span class="file-symbol">▤</span><span><b>Explanation audio</b><small id="eAudioName">No file selected</small></span><input id="eAudio" type="file" accept="audio/*"></label>
+
+      <div class="sidebar-divider"></div>
+      <div class="section-heading"><span>PLAYBACK</span></div>
+      <div class="setting-row"><span>Auto play audio</span><label class="switch"><input type="checkbox" id="autoplay" checked><i></i></label></div>
+      <div class="setting-row"><span>Show progress bar</span><label class="switch"><input type="checkbox" id="showProgress" checked><i></i></label></div>
+      <div class="audio-note">Audio sync: इस शुरुआती संस्करण में audio playback उपलब्ध है। Phrase/word-level AI timestamps को अगले चरण में alignment service से जोड़ा जाएगा।</div>
+    </aside>
+
+    <section class="main-panel">
+      <div class="panel-head">
+        <div><div class="eyebrow">LIVE PREVIEW</div><h1>Presentation Studio</h1><p>हर प्रश्न के तीन चरण • OBS-ready canvas</p></div>
+        <div class="head-right"><span id="questionCount">0 QUESTIONS</span><button class="btn btn-outline" id="openPresentation">↗ Open Presentation</button></div>
+      </div>
+
+      <div class="stage-toolbar">
+        <div class="stage-tabs">
+          <button class="stage-tab active" data-stage="0"><span>01</span> Question</button>
+          <button class="stage-tab" data-stage="1"><span>02</span> Answer</button>
+          <button class="stage-tab" data-stage="2"><span>03</span> Explanation</button>
+        </div>
+        <div class="stage-meta"><span id="stageLabel">QUESTION</span><span class="meta-sep">•</span><span id="stageQuestion">QUESTION 01</span></div>
+      </div>
+
+      <div class="preview-wrap" id="previewWrap">
+        <div class="presentation" id="presentation">
+          <div class="canvas-glow"></div>
+          <div class="canvas-top"><div class="canvas-brand"><span class="mini-mark">M</span> MCQ STUDIO</div><div class="canvas-tag">GENERAL STUDIES</div></div>
+          <div class="canvas-content" id="canvasContent">
+            <div class="empty-state"><div class="empty-icon">✦</div><h2>आपकी प्रस्तुति तैयार है</h2><p>बाईं ओर question file import करें या अपना content paste करें।</p></div>
+          </div>
+          <div class="canvas-bottom"><span>LEARN • PRACTICE • SUCCEED</span><span id="canvasCounter">01 / 01</span></div>
+        </div>
+        <button class="hit-zone hit-prev" id="prevZone" aria-label="Previous stage"></button>
+        <button class="hit-zone hit-next" id="nextZone" aria-label="Next stage"></button>
+        <div class="zone-hint left-hint">← PREVIOUS</div><div class="zone-hint right-hint">NEXT →</div>
+      </div>
+
+      <div class="transport">
+        <div class="transport-left"><button class="round-btn" id="prevBtn" title="Previous (←)">←</button><button class="round-btn play-btn" id="playBtn" title="Play/Pause (Space)">▶</button><button class="round-btn" id="nextBtn" title="Next (→)">→</button><div class="transport-info"><b id="transportTitle">Ready to present</b><small id="transportSub">Load a question set to begin</small></div></div>
+        <div class="transport-right"><span id="timeDisplay">00:00 / 00:00</span><input type="range" id="seekBar" min="0" max="100" value="0" aria-label="Seek audio"></div>
+      </div>
+      <div class="keyboard-hint"><kbd>←</kbd><kbd>→</kbd> Navigate <span></span><kbd>SPACE</kbd> Play / Pause <span></span><kbd>F</kbd> Fullscreen</div>
+    </section>
+  </main>
+</div>
+<audio id="audioPlayer" preload="metadata"></audio>
+<div class="toast" id="toast" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>
