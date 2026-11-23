@@ -62,3 +62,11 @@ body.presentation-mode .question-jump-panel,body.presentation-mode .canvas-contr
 .canvas-content{position:relative!important;z-index:2!important;overflow:visible!important}
 .question-text,.options-grid,.explanation-text,.question-kicker{visibility:visible!important;opacity:1}
 @media(max-width:850px){.canvas-layout{grid-template-columns:minmax(0,1fr)!important}.question-jump-panel{width:100%!important;max-height:160px}}
+
+/* Responsive canvas splitter: canvas width changes, adjacent panel fills remainder */
+.canvas-layout{width:100%;grid-template-columns:minmax(260px,1fr) minmax(90px,150px)!important;overflow:hidden}
+.canvas-layout .preview-wrap{min-width:0!important;width:100%!important;flex:none!important;aspect-ratio:16/9!important;height:auto!important}
+.canvas-layout .question-jump-panel{width:100%!important;min-width:0!important;flex:none!important;overflow:auto}
+.canvas-layout .question-number-grid{grid-template-columns:repeat(auto-fit,minmax(24px,1fr))}
+.canvas-resize-handle{cursor:ew-resize!important}
+@media(max-width:850px){.canvas-layout{grid-template-columns:minmax(0,1fr)!important}.canvas-resize-handle{display:none}}
