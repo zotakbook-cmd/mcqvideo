@@ -70,3 +70,9 @@ body.presentation-mode .question-jump-panel,body.presentation-mode .canvas-contr
 .canvas-layout .question-number-grid{grid-template-columns:repeat(auto-fit,minmax(24px,1fr))}
 .canvas-resize-handle{cursor:ew-resize!important}
 @media(max-width:850px){.canvas-layout{grid-template-columns:minmax(0,1fr)!important}.canvas-resize-handle{display:none}}
+
+/* Resize splitter repair: remove conflicting grid-template-columns !important */
+.canvas-layout{display:grid;grid-template-columns:minmax(260px,1fr) minmax(90px,150px);overflow:visible}
+.canvas-layout .preview-wrap{position:relative}
+.canvas-resize-handle{position:absolute;right:0;bottom:0;width:34px;height:34px;z-index:9999;touch-action:none;pointer-events:auto;background:#285284;border:2px solid #9cc4ff;cursor:ew-resize}
+@media(max-width:850px){.canvas-resize-handle{display:none}}
