@@ -35,7 +35,7 @@
       <div class="sidebar-divider"></div>
       <div class="section-heading"><span>AUDIO FILES</span><span class="optional">OPTIONAL</span></div>
       <div class="audio-help">एक ही लंबी audio file अपलोड करें—इसमें कई प्रश्न, उत्तर और explanations हो सकते हैं। Stage बदलने पर audio बंद या reset नहीं होगा।</div>
-      <label class="file-row"><span class="file-symbol">♫</span><span><b>Continuous audio track</b><small id="audioName">No file selected</small></span><input id="audioFile" type="file" accept="audio/*"></label>
+      <div class="file-row" id="audioFileTrigger" role="button" tabindex="0"><span class="file-symbol">♫</span><span><b>Continuous audio track</b><small id="audioName">No file selected</small></span></div><input id="audioFile" type="file" accept="audio/*" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
 
       <div class="sidebar-divider"></div>
       <div id="timelinePanel"></div>
