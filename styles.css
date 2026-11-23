@@ -93,3 +93,8 @@ body.presentation-mode .question-jump-panel,body.presentation-mode .canvas-contr
 .canvas-layout .canvas-splitter:hover:before,.canvas-layout .canvas-splitter.dragging:before{background:#78a9f5;box-shadow:0 0 15px #73a9f5}
 .canvas-layout .canvas-splitter-left{grid-column:1}.canvas-layout .preview-wrap{grid-column:2;min-width:0!important;width:100%!important;flex:none!important;aspect-ratio:16/9!important;height:auto!important}.canvas-layout .canvas-splitter-right{grid-column:3}.canvas-layout .question-jump-panel{grid-column:4;width:100%!important;min-width:0!important;flex:none!important;max-height:calc(100vw * .5);overflow:auto}
 @media(max-width:850px){.canvas-layout{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}.canvas-layout .preview-wrap,.canvas-layout .question-jump-panel{grid-column:1}.canvas-layout .canvas-splitter{display:none}}
+
+/* Hide mouse-click focus boxes on navigation/buttons while preserving keyboard focus accessibility */
+button:focus:not(:focus-visible){outline:none!important;box-shadow:none!important}
+.hit-zone:focus:not(:focus-visible),.round-btn:focus:not(:focus-visible),#prevBtn:focus:not(:focus-visible),#nextBtn:focus:not(:focus-visible){outline:none!important;border-color:transparent!important;box-shadow:none!important}
+.hit-zone{outline:none!important}
