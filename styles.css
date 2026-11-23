@@ -98,3 +98,8 @@ body.presentation-mode .question-jump-panel,body.presentation-mode .canvas-contr
 button:focus:not(:focus-visible){outline:none!important;box-shadow:none!important}
 .hit-zone:focus:not(:focus-visible),.round-btn:focus:not(:focus-visible),#prevBtn:focus:not(:focus-visible),#nextBtn:focus:not(:focus-visible){outline:none!important;border-color:transparent!important;box-shadow:none!important}
 .hit-zone{outline:none!important}
+
+/* Navigation click artifact fix: suppress all mouse/touch focus rings and tap flashes */
+#prevBtn,#nextBtn,#prevZone,#nextZone,.hit-zone,.round-btn{outline:0!important;-webkit-tap-highlight-color:transparent!important;}
+#prevBtn:focus,#nextBtn:focus,#prevZone:focus,#nextZone:focus,.hit-zone:focus,.round-btn:focus{outline:0!important;box-shadow:none!important;}
+#prevBtn:active,#nextBtn:active,#prevZone:active,#nextZone:active,.hit-zone:active,.round-btn:active{outline:0!important;box-shadow:none!important;}
