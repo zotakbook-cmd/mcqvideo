@@ -17,18 +17,18 @@ async function restoreWorkspace(){try{const saved=await dbGet('current');if(!sav
 function notify(m){const e=$('toast');e.textContent=m;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),2400)}
 function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function parseQuestions(raw){
- const text=String(raw||'').replace(/^\\uFEFF/,'').replace(/\\r/g,'').trim();
+ const text=String(raw||'').replace(/^\uFEFF/,'').replace(/\r/g,'').trim();
  if(!text)return [];
  // Normalize headings and split on each hash marker, regardless of whether blank lines are present.
- const blocks=text.split(/(?:^|\\n)\\s*#\\s*/).map(v=>v.trim()).filter(Boolean);
+ const blocks=text.split(/(?:^|\n)\s*#\s*/).map(v=>v.trim()).filter(Boolean);
  const parsed=[];
  for(let i=0;i<blocks.length;){
   const qb=blocks[i++]||'', ab=blocks[i++]||'', ex=blocks[i++]||'';
-  const lines=qb.split(/\\n/).map(v=>v.trim()).filter(Boolean);
-  const opt=/^([A-D])[.)、:：-]\\s*(.+)$/i;
+  const lines=qb.split(/\n/).map(v=>v.trim()).filter(Boolean);
+  const opt=/^([A-D])[.)、:：-]\s*(.+)$/i;
   const options=lines.filter(v=>opt.test(v)).map(v=>{const m=v.match(opt);return {key:m[1].toUpperCase(),text:m[2].trim()}});
   const question=lines.filter(v=>!opt.test(v)).join(' ');
-  const am=ab.match(/(?:उत्तर|answer)?\\s*[:：-]?\\s*([A-D])\\b/i);
+  const am=ab.match(/(?:उत्तर|answer)?\s*[:：-]?\s*([A-D])\b/i);
   const answer=am?am[1].toUpperCase():'';
   if(question&&options.length>=2&&options.some(o=>o.key===answer)){
     parsed.push({question,options,answer,explanation:ex,timestamps:[null,null,null]});
