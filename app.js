@@ -18,7 +18,7 @@ function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':
 function parseQuestions(raw){
  const text=String(raw||'').replace(/^\\uFEFF/,'').replace(/\\r/g,'');
  // Split on standalone heading/separator lines beginning with #; keep every non-empty block.
- const blocks=text.split(/^\\s*#\\s*$/m).map(x=>x.trim()).filter(Boolean);
+ const blocks=text.split(/(?:^|\\n)[ \\t]*#[ \\t]*/).map(x=>x.trim()).filter(Boolean);
  const parsed=[];
  for(let i=0;i+2<blocks.length;i+=3){
    const qb=blocks[i],ab=blocks[i+1],ex=blocks[i+2];
