@@ -61,7 +61,7 @@
         <div class="stage-meta"><span id="stageLabel">QUESTION</span><span class="meta-sep">•</span><span id="stageQuestion">QUESTION 01</span></div>
       </div>
 
-      <div class="preview-wrap" id="previewWrap">
+      <div class="canvas-layout"><div class="preview-wrap" id="previewWrap">
         <div class="presentation" id="presentation">
           <div class="canvas-glow"></div>
           <div class="canvas-top"><div class="canvas-brand"><span class="mini-mark">M</span> MCQ STUDIO</div><div class="canvas-tag">GENERAL STUDIES</div></div>
@@ -73,7 +73,8 @@
         <button class="hit-zone hit-prev" id="prevZone" aria-label="Previous stage"></button>
         <button class="hit-zone hit-next" id="nextZone" aria-label="Next stage"></button>
         <div class="zone-hint left-hint">← PREVIOUS</div><div class="zone-hint right-hint">NEXT →</div>
-      </div>
+      </div><aside class="question-jump-panel" id="questionJumpPanel"><div class="section-heading">QUESTIONS <span id="jumpCount">0</span></div><div class="question-number-grid" id="questionNumberGrid"></div></aside></div>
+      <div class="canvas-controls"><button id="fontDown" title="Font smaller">A−</button><button id="fontUp" title="Font larger">A+</button><span id="fontSizeLabel">100%</span><span class="resize-hint">Canvas को कोने से drag करके आकार बदलें (16:9)</span></div>
 
       <div class="transport">
         <div class="transport-left"><button class="round-btn" id="prevBtn" title="Previous (←)">←</button><button class="round-btn play-btn" id="playBtn" title="Play/Pause (Space)">▶</button><button class="round-btn" id="nextBtn" title="Next (→)">→</button><div class="transport-info"><b id="transportTitle">Ready to present</b><small id="transportSub">Load a question set to begin</small></div></div>
