@@ -1,6 +1,7 @@
 (() => {
 'use strict';
 const $=id=>document.getElementById(id);
+window.addEventListener('error',e=>{console.error('MCQ Studio runtime error',e.error||e.message);const s=document.getElementById('workspaceStatus');if(s)s.textContent='JavaScript error: '+(e.message||'check Console');});
 const state={questions:[],index:0,stage:0,audioUrl:null,presentationMode:false,manualHold:false,holdUntil:null,timelineKey:null};
 const audio=$('audioPlayer');let toastTimer;
 // Persistent workspace (IndexedDB stores the audio Blob, not a temporary object URL)
@@ -16,25 +17,29 @@ async function restoreWorkspace(){try{const saved=await dbGet('current');if(!sav
 function notify(m){const e=$('toast');e.textContent=m;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),2400)}
 function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function parseQuestions(raw){
- const text=String(raw||'').replace(/^\uFEFF/,'').replace(/\r/g,'');
- const blocks=text.split(/(?:^|\n)[ \t]*#[ \t]*/).map(x=>x.trim()).filter(Boolean);
+ const text=String(raw||'').replace(/^\\uFEFF/,'').replace(/\\r/g,'').trim();
+ if(!text)return [];
+ // Normalize headings and split on each hash marker, regardless of whether blank lines are present.
+ const blocks=text.split(/(?:^|\\n)\\s*#\\s*/).map(v=>v.trim()).filter(Boolean);
  const parsed=[];
- for(let i=0;i+2<blocks.length;i+=3){
-   const qb=blocks[i],ab=blocks[i+1],ex=blocks[i+2];
-   const lines=qb.split(/\n/).map(x=>x.trim()).filter(Boolean);
-   const optionPattern=/^([A-D])[.)、:：-]\s*(.+)$/i;
-   const options=lines.map(line=>line.match(optionPattern)).filter(Boolean).map(m=>({key:m[1].toUpperCase(),text:m[2].trim()}));
-   const qLines=lines.filter(line=>!optionPattern.test(line));
-   const answerMatch=String(ab).match(/(?:उत्तर|answer)?\s*[:：-]?\s*([A-D])\b/i);
-   const answer=answerMatch?answerMatch[1].toUpperCase():'';
-   if(qLines.length&&options.length>=2&&/^[A-D]$/.test(answer)&&options.some(o=>o.key===answer)){
-     parsed.push({question:qLines.join(' '),options,answer,explanation:ex.trim(),timestamps:[null,null,null]});
-   }
+ for(let i=0;i<blocks.length;){
+  const qb=blocks[i++]||'', ab=blocks[i++]||'', ex=blocks[i++]||'';
+  const lines=qb.split(/\\n/).map(v=>v.trim()).filter(Boolean);
+  const opt=/^([A-D])[.)、:：-]\\s*(.+)$/i;
+  const options=lines.filter(v=>opt.test(v)).map(v=>{const m=v.match(opt);return {key:m[1].toUpperCase(),text:m[2].trim()}});
+  const question=lines.filter(v=>!opt.test(v)).join(' ');
+  const am=ab.match(/(?:उत्तर|answer)?\\s*[:：-]?\\s*([A-D])\\b/i);
+  const answer=am?am[1].toUpperCase():'';
+  if(question&&options.length>=2&&options.some(o=>o.key===answer)){
+    parsed.push({question,options,answer,explanation:ex,timestamps:[null,null,null]});
+  }else if(qb&&i>=blocks.length){
+    // Informative but not discarded silently; incomplete final block remains unparsed.
+  }
  }
  return parsed;
 }
 function fingerprint(raw){let hash=2166136261;for(let i=0;i<raw.length;i++){hash^=raw.charCodeAt(i);hash=Math.imul(hash,16777619)}return' mcqstudio-sync-'+(hash>>>0)}
-function loadQuestions(raw){let parsed=[];try{parsed=parseQuestions(String(raw||''))}catch(err){console.error('Question parsing error',err);notify('Question format पढ़ने में error');return false}if(!parsed.length){state.questions=[];$('questionCount').textContent='0 QUESTIONS';$('jumpCount').textContent='0';$('questionNumberGrid').innerHTML='';$('canvasContent').innerHTML='<div class="empty-state"><div class="empty-icon">!</div><h2>Questions Load नहीं हुए</h2><p>Question, 4 options, # Answer और # Explanation वाले format को जाँचें, फिर Load Questions दबाएँ।</p></div>';notify('Format नहीं मिला: प्रत्येक प्रश्न के लिए 3 # blocks आवश्यक हैं।');return false}
+function loadQuestions(raw){let parsed=[];try{parsed=parseQuestions(String(raw||''))}catch(err){console.error('Question parsing error',err);notify('Question format पढ़ने में error');return false}if(!parsed.length){state.questions=[];$('questionCount').textContent='0 QUESTIONS';$('jumpCount').textContent='0';$('questionNumberGrid').innerHTML='';$('canvasContent').innerHTML='<div class="empty-state"><div class="empty-icon">!</div><h2>Questions Load नहीं हुए</h2><p>प्रत्येक प्रश्न के बाद # Answer (A/B/C/D) होना जरूरी है। Explanation optional है।</p></div>';notify('Question format पहचान नहीं पाया। प्रश्न, विकल्प और # Answer जाँचें।');return false}
  state.questions=parsed;state.index=0;state.stage=0;state.timelineKey=fingerprint(raw);saveWorkspaceSoon();
  try{const saved=JSON.parse(localStorage.getItem(state.timelineKey)||'null');if(saved&&Array.isArray(saved))saved.forEach((ts,i)=>{if(parsed[i]&&Array.isArray(ts))parsed[i].timestamps=ts.map(v=>v===null?null:Number(v))})}catch{}
  $('questionCount').textContent=parsed.length+' QUESTIONS';$('transportTitle').textContent='Question set loaded';$('transportSub').textContent=parsed.length+' questions • '+parsed.length*3+' presentation stages';renderTimeline();render();notify(parsed.length+' questions loaded successfully');return true}
