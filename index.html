@@ -34,16 +34,14 @@
 
       <div class="sidebar-divider"></div>
       <div class="section-heading"><span>AUDIO FILES</span><span class="optional">OPTIONAL</span></div>
-      <div class="audio-help">हर प्रश्न के लिए Question, Answer और Explanation audio चुनें। ये फाइलें इसी browser session में इस्तेमाल होंगी।</div>
-      <label class="file-row"><span class="file-symbol">♫</span><span><b>Question audio</b><small id="qAudioName">No file selected</small></span><input id="qAudio" type="file" accept="audio/*"></label>
-      <label class="file-row"><span class="file-symbol">✓</span><span><b>Answer audio</b><small id="aAudioName">No file selected</small></span><input id="aAudio" type="file" accept="audio/*"></label>
-      <label class="file-row"><span class="file-symbol">▤</span><span><b>Explanation audio</b><small id="eAudioName">No file selected</small></span><input id="eAudio" type="file" accept="audio/*"></label>
+      <div class="audio-help">एक ही लंबी audio file अपलोड करें—इसमें कई प्रश्न, उत्तर और explanations हो सकते हैं। Stage बदलने पर audio बंद या reset नहीं होगा।</div>
+      <label class="file-row"><span class="file-symbol">♫</span><span><b>Continuous audio track</b><small id="audioName">No file selected</small></span><input id="audioFile" type="file" accept="audio/*"></label>
 
       <div class="sidebar-divider"></div>
       <div class="section-heading"><span>PLAYBACK</span></div>
       <div class="setting-row"><span>Auto play audio</span><label class="switch"><input type="checkbox" id="autoplay" checked><i></i></label></div>
       <div class="setting-row"><span>Show progress bar</span><label class="switch"><input type="checkbox" id="showProgress" checked><i></i></label></div>
-      <div class="audio-note">Audio sync: इस शुरुआती संस्करण में audio playback उपलब्ध है। Phrase/word-level AI timestamps को अगले चरण में alignment service से जोड़ा जाएगा।</div>
+      <div class="audio-note">Continuous audio playback: navigation से audio interrupt नहीं होगा। आगे AI alignment timestamps से text को audio के समय के अनुसार automatically sync किया जाएगा।</div>
     </aside>
 
     <section class="main-panel">
