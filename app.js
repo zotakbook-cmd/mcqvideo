@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 const $ = id => document.getElementById(id);
-const state = { questions: [], index: 0, stage: 0, audioUrls: {question:null,answer:null,explanation:null}, presentationMode:false };
+const state = { questions: [], index: 0, stage: 0, audioUrl:null, presentationMode:false };
 const audio = $('audioPlayer');
 let toastTimer;
 
@@ -67,22 +67,12 @@ function render() {
     $('transportTitle').textContent=state.stage===0?'Question & Options':'Correct Answer: '+q.answer;
   }
   $('transportSub').textContent='Question '+(state.index+1)+' of '+state.questions.length+' • Stage '+(state.stage+1)+' of 3';
-  stopAudio();
-  const audioKey=['question','answer','explanation'][state.stage];
-  const url=state.audioUrls[audioKey];
-  if(url) {
-    audio.src=url;
-    if($('autoplay').checked) audio.play().then(updatePlayButton).catch(()=>notify('Audio playback शुरू करने के लिए Play दबाएँ'));
-  } else {
-    audio.removeAttribute('src'); audio.load(); updateAudioUI();
-  }
-  $('seekBar').value=0; $('timeDisplay').textContent='00:00 / 00:00';
-  $('playBtn').textContent='▶';
+  // Stage navigation deliberately leaves the single continuous audio track untouched.
+  updateAudioUI();
   $('presentation').classList.remove('stage-enter');
   void $('presentation').offsetWidth;
   $('presentation').classList.add('stage-enter');
 }
-function stopAudio() { audio.pause(); audio.currentTime=0; }
 function updatePlayButton(){ $('playBtn').textContent=audio.paused?'▶':'Ⅱ'; }
 function updateAudioUI() {
   const duration=Number.isFinite(audio.duration)?audio.duration:0;
@@ -115,15 +105,16 @@ $('textFile').addEventListener('change',async e=>{
   const file=e.target.files?.[0]; if(!file)return;
   const text=await file.text(); $('questionInput').value=text; loadQuestions(text);
 });
-[['qAudio','question','qAudioName'],['aAudio','answer','aAudioName'],['eAudio','explanation','eAudioName']].forEach(([input,key,label])=>{
-  $(input).addEventListener('change',e=>{
-    const file=e.target.files?.[0]; if(!file)return;
-    if(state.audioUrls[key]) URL.revokeObjectURL(state.audioUrls[key]);
-    state.audioUrls[key]=URL.createObjectURL(file);
-    $(label).textContent=file.name;
-    notify(file.name+' attached');
-    if(state.questions.length) render();
-  });
+$('audioFile').addEventListener('change',e=>{
+  const file=e.target.files?.[0]; if(!file)return;
+  if(state.audioUrl) URL.revokeObjectURL(state.audioUrl);
+  state.audioUrl=URL.createObjectURL(file);
+  audio.src=state.audioUrl;
+  audio.load();
+  $('audioName').textContent=file.name;
+  notify('Continuous audio track loaded');
+  updateAudioUI();
+  if($('autoplay').checked) audio.play().then(updatePlayButton).catch(()=>notify('Audio playback के लिए Play दबाएँ'));
 });
 $('prevBtn').addEventListener('click',()=>go(-1)); $('nextBtn').addEventListener('click',()=>go(1));
 $('prevZone').addEventListener('click',()=>go(-1)); $('nextZone').addEventListener('click',()=>go(1));
@@ -132,7 +123,7 @@ document.querySelectorAll('.stage-tab').forEach(button=>button.addEventListener(
   state.stage=Number(button.dataset.stage); render();
 }));
 $('playBtn').addEventListener('click',()=>{
-  if(!audio.src){notify('इस stage के लिए audio file attach करें');return;}
+  if(!audio.src){notify('पहले एक continuous audio track upload करें');return;}
   if(audio.paused) audio.play().then(updatePlayButton).catch(()=>notify('Audio play नहीं हो सका'));
   else audio.pause();
   updatePlayButton();
