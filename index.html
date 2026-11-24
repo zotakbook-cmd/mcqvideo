@@ -74,7 +74,7 @@
         <button class="hit-zone hit-next" id="nextZone" aria-label="Next stage"></button>
         <div class="zone-hint left-hint">← PREVIOUS</div><div class="zone-hint right-hint">NEXT →</div>
       </div><aside class="question-jump-panel" id="questionJumpPanel"><div class="section-heading">QUESTIONS <span id="jumpCount">0</span></div><div class="question-number-grid" id="questionNumberGrid"></div></aside></div>
-      <div class="canvas-controls"><button id="fontDown" title="Font smaller">A−</button><button id="fontUp" title="Font larger">A+</button><span id="fontSizeLabel">100%</span><span class="resize-hint">Canvas को कोने से drag करके आकार बदलें (16:9)</span></div>
+      <div class="canvas-controls"><button id="fontDown" title="Font smaller">A−</button><button id="fontUp" title="Font larger">A+</button><span id="fontSizeLabel">100%</span><label class="orientation-control">Canvas <select id="canvasOrientation" aria-label="Canvas orientation"><option value="landscape">Landscape (16:9)</option><option value="portrait">Portrait (9:16)</option></select></label><span class="resize-hint">Content स्वतः adjust होगा</span></div>
 
       <div class="transport">
         <div class="transport-left"><button class="round-btn" id="prevBtn" title="Previous (←)">←</button><button class="round-btn play-btn" id="playBtn" title="Play/Pause (Space)">▶</button><button class="round-btn" id="nextBtn" title="Next (→)">→</button><div class="transport-info"><b id="transportTitle">Ready to present</b><small id="transportSub">Load a question set to begin</small></div></div>
