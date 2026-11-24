@@ -102,5 +102,34 @@ leftSplit.addEventListener('pointerdown',e=>startResize(e,'left'));rightSplit.ad
 window.addEventListener('pointermove',moveResize);window.addEventListener('pointerup',stopResize);window.addEventListener('pointercancel',stopResize);
 audio.addEventListener('timeupdate',()=>{updateAudioUI();syncTick()});audio.addEventListener('loadedmetadata',updateAudioUI);audio.addEventListener('play',updatePlayButton);audio.addEventListener('pause',updatePlayButton);audio.addEventListener('ended',()=>{updatePlayButton();notify('Audio complete — Next से आगे बढ़ें')});$('seekBar').addEventListener('input',e=>{if(Number.isFinite(audio.duration)){audio.currentTime=Number(e.target.value);state.manualHold=false;syncTick()}});
 document.addEventListener('keydown',e=>{const tag=document.activeElement?.tagName;if(tag==='TEXTAREA'||tag==='INPUT')return;if(e.key==='ArrowRight'){e.preventDefault();go(1)}if(e.key==='ArrowLeft'){e.preventDefault();go(-1)}if(e.code==='Space'){e.preventDefault();$('playBtn').click()}if(e.key.toLowerCase()==='f')toggleFullscreen();if(e.key==='Escape'&&state.presentationMode){state.presentationMode=false;document.body.classList.remove('presentation-mode')}});
+
+/* Canvas-only WebM recorder: snapshots DOM canvas and mixes the continuous audio stream. */
+let recorder=null,recordStream=null,recordChunks=[],recordingCanvas=null,recordingCtx=null,recordTimerInterval=null,recordStartedAt=0,recordElapsed=0,recordPaused=false,snapshotBusy=false;
+function recorderMime(){return ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||''}
+async function snapshotPresentation(){
+ if(snapshotBusy||!recordingCanvas)return;snapshotBusy=true;
+ try{const el=$('presentation');const snap=await html2canvas(el,{backgroundColor:null,scale:state.orientation==='portrait'?1.2:1.5,useCORS:true,logging:false});
+ recordingCtx.clearRect(0,0,recordingCanvas.width,recordingCanvas.height);recordingCtx.drawImage(snap,0,0,recordingCanvas.width,recordingCanvas.height);}
+ catch(err){console.warn('Recording frame capture failed',err)}finally{snapshotBusy=false}
+}
+function updateRecordTimer(){const s=Math.floor(recordElapsed+(recordPaused?0:(Date.now()-recordStartedAt)/1000));$('recordTimer').textContent=formatTime(s)}
+async function startRecording(){
+ if(!state.questions.length){notify('पहले questions load करें');return}
+ if(!window.html2canvas||!window.MediaRecorder){notify('इस browser में recording support नहीं है');return}
+ const portrait=state.orientation==='portrait';recordingCanvas=document.createElement('canvas');recordingCanvas.width=portrait?720:1280;recordingCanvas.height=portrait?1280:720;recordingCtx=recordingCanvas.getContext('2d');
+ await snapshotPresentation();const videoStream=recordingCanvas.captureStream(30);const tracks=[...videoStream.getVideoTracks()];
+ try{const audioCapture=audio.captureStream?audio.captureStream():audio.mozCaptureStream?.();if(audioCapture)tracks.push(...audioCapture.getAudioTracks());else if(!audio.paused)notify('Audio capture unsupported—video will record without audio')}catch(e){console.warn('Audio capture unavailable',e)}
+ recordStream=new MediaStream(tracks);recordChunks=[];const mime=recorderMime();recorder=new MediaRecorder(recordStream,mime?{mimeType:mime,videoBitsPerSecond:5000000}:undefined);
+ recorder.ondataavailable=e=>{if(e.data&&e.data.size)recordChunks.push(e.data)};
+ recorder.onstop=()=>{const blob=new Blob(recordChunks,{type:recorder.mimeType||'video/webm'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='MCQ-Studio-'+new Date().toISOString().replace(/[:.]/g,'-')+'.webm';a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);notify('WebM video download ready');recordStream?.getTracks().forEach(t=>t.stop());clearInterval(recordTimerInterval);$('recordBtn').disabled=false;$('recordBtn').textContent='● Record';$('pauseRecordBtn').disabled=true;$('pauseRecordBtn').textContent='Ⅱ Pause';$('recordTimer').textContent='00:00';recordingCanvas=null};
+ recorder.start(1000);recordStartedAt=Date.now();recordElapsed=0;recordPaused=false;$('recordBtn').disabled=true;$('recordBtn').textContent='● Recording';$('pauseRecordBtn').disabled=false;recordTimerInterval=setInterval(updateRecordTimer,500);
+ // Snapshot at a modest cadence to limit CPU load on mobile devices.
+ window.__mcqSnapshotTimer=setInterval(snapshotPresentation,350);
+ notify(audio.src?'Recording canvas + audio':'Recording canvas (no audio track)');
+}
+function pauseRecording(){if(!recorder)return;if(!recordPaused){recorder.pause();recordElapsed+=(Date.now()-recordStartedAt)/1000;recordPaused=true;$('pauseRecordBtn').textContent='▶ Resume';clearInterval(window.__mcqSnapshotTimer)}else{recorder.resume();recordPaused=false;recordStartedAt=Date.now();$('pauseRecordBtn').textContent='Ⅱ Pause';window.__mcqSnapshotTimer=setInterval(snapshotPresentation,350)}updateRecordTimer()}
+function stopRecording(){if(recorder&&recorder.state!=='inactive'){clearInterval(window.__mcqSnapshotTimer);recorder.stop()}}
+$('recordBtn').addEventListener('click',()=>startRecording().catch(e=>{console.error(e);notify('Recording start failed')}));$('pauseRecordBtn').addEventListener('click',pauseRecording);
+
 const sample='# भारत का संविधान कब लागू हुआ?\nA. 15 अगस्त 1947\nB. 26 जनवरी 1950\nC. 26 नवंबर 1949\nD. 2 अक्टूबर 1950\n\n# B\n\n# भारतीय संविधान 26 नवंबर 1949 को अंगीकृत किया गया था, लेकिन इसे 26 जनवरी 1950 को लागू किया गया।\n\n# भारतीय संविधान सभा के स्थायी अध्यक्ष कौन थे?\nA. डॉ. राजेंद्र प्रसाद\nB. जवाहरलाल नेहरू\nC. डॉ. भीमराव आंबेडकर\nD. सरदार पटेल\n\n# A\n\n# संविधान सभा के स्थायी अध्यक्ष डॉ. राजेंद्र प्रसाद थे।\n\n# भारत में मौलिक अधिकार किस भाग में दिए गए हैं?\nA. भाग I\nB. भाग II\nC. भाग III\nD. भाग IV\n\n# C\n\n# भारतीय संविधान के भाग III में अनुच्छेद 12 से 35 तक मौलिक अधिकार दिए गए हैं।\n\n# भारत के राष्ट्रपति का कार्यकाल कितने वर्ष का होता है?\nA. 4 वर्ष\nB. 5 वर्ष\nC. 6 वर्ष\nD. 7 वर्ष\n\n# B\n\n# राष्ट्रपति का कार्यकाल पाँच वर्ष का होता है।\n\n# संविधान में राज्य के नीति निदेशक तत्व किस भाग में हैं?\nA. भाग II\nB. भाग III\nC. भाग IV\nD. भाग V\n\n# C\n\n# राज्य के नीति निदेशक तत्व संविधान के भाग IV में अनुच्छेद 36 से 51 तक हैं।';$('questionInput').addEventListener('input',saveWorkspaceSoon);$('autoSync').addEventListener('change',saveWorkspaceSoon);$('autoplay').addEventListener('change',saveWorkspaceSoon);$('showProgress').addEventListener('change',saveWorkspaceSoon);restoreWorkspace().then(()=>{const raw=$('questionInput').value.trim();if(!raw||!loadQuestions(raw)){ $('questionInput').value=sample;loadQuestions(sample);saveWorkspace();}}).catch(err=>{console.error('Workspace startup failed',err);$('questionInput').value=sample;loadQuestions(sample);saveWorkspace();});
 })();
