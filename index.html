@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
 <div class="app-shell">
@@ -78,7 +79,7 @@
 
       <div class="transport">
         <div class="transport-left"><button class="round-btn" id="prevBtn" title="Previous (←)">←</button><button class="round-btn play-btn" id="playBtn" title="Play/Pause (Space)">▶</button><button class="round-btn" id="nextBtn" title="Next (→)">→</button><div class="transport-info"><b id="transportTitle">Ready to present</b><small id="transportSub">Load a question set to begin</small></div></div>
-        <div class="transport-right"><span id="timeDisplay">00:00 / 00:00</span><input type="range" id="seekBar" min="0" max="100" value="0" aria-label="Seek audio"></div>
+        <div class="transport-right"><span id="timeDisplay">00:00 / 00:00</span><input type="range" id="seekBar" min="0" max="100" value="0" aria-label="Seek audio"><div class="record-controls"><button id="recordBtn" class="record-btn">● Record</button><button id="pauseRecordBtn" disabled>Ⅱ Pause</button><span id="recordTimer">00:00</span></div></div>
       </div>
       <div class="keyboard-hint"><kbd>←</kbd><kbd>→</kbd> Navigate <span></span><kbd>SPACE</kbd> Play / Pause <span></span><kbd>F</kbd> Fullscreen</div>
     </section>
