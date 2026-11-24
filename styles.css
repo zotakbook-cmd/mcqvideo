@@ -103,3 +103,21 @@ button:focus:not(:focus-visible){outline:none!important;box-shadow:none!importan
 #prevBtn,#nextBtn,#prevZone,#nextZone,.hit-zone,.round-btn{outline:0!important;-webkit-tap-highlight-color:transparent!important;}
 #prevBtn:focus,#nextBtn:focus,#prevZone:focus,#nextZone:focus,.hit-zone:focus,.round-btn:focus{outline:0!important;box-shadow:none!important;}
 #prevBtn:active,#nextBtn:active,#prevZone:active,#nextZone:active,.hit-zone:active,.round-btn:active{outline:0!important;box-shadow:none!important;}
+
+/* Orientation switch: adapt canvas ratio and content layout */
+.preview-wrap.portrait-canvas{aspect-ratio:9/16!important;max-height:none!important}
+.preview-wrap.portrait-canvas .presentation{padding:6% 7%}
+.portrait-canvas .canvas-top,.portrait-canvas .canvas-bottom{gap:5px;flex-wrap:wrap}
+.portrait-canvas .canvas-tag{font-size:clamp(6px,1.1vw,10px);letter-spacing:1px}
+.portrait-canvas .canvas-content{padding:4% 1%;justify-content:center;gap:1.5%}
+.portrait-canvas .question-text{font-size:clamp(13px,2.2vw,30px)!important;line-height:1.35!important;max-width:100%}
+.portrait-canvas .options-grid{grid-template-columns:1fr!important;gap:2.5%!important;margin-top:3%!important}
+.portrait-canvas .option{font-size:clamp(10px,1.7vw,21px)!important;min-height:0!important;padding:2.5% 3%!important;line-height:1.3!important;gap:8px!important}
+.portrait-canvas .option-letter{width:clamp(20px,2vw,32px);height:clamp(20px,2vw,32px)}
+.portrait-canvas .explanation-text{font-size:clamp(12px,2vw,28px)!important;line-height:1.5!important;max-width:100%}
+.portrait-canvas .question-kicker{font-size:clamp(8px,1.3vw,12px)!important;margin-bottom:2%!important}
+.portrait-canvas .canvas-brand{font-size:clamp(6px,1vw,10px)}
+.canvas-controls .orientation-control{display:flex;align-items:center;gap:5px;font-size:10px;color:#91a3bd}
+#canvasOrientation{background:#132945;border:1px solid #395779;color:#dce8fa;border-radius:6px;padding:5px 7px;font-size:10px;max-width:150px}
+@media(max-width:850px){.preview-wrap.portrait-canvas{width:min(100%,480px)!important;aspect-ratio:9/16!important;align-self:center}}
+body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-width:none!important;aspect-ratio:9/16!important;height:100vh!important;margin:auto!important}
