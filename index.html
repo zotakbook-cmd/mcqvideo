@@ -79,9 +79,10 @@
 
       <div class="transport">
         <div class="transport-left"><button class="round-btn" id="prevBtn" title="Previous (←)">←</button><button class="round-btn play-btn" id="playBtn" title="Play/Pause (Space)">▶</button><button class="round-btn" id="nextBtn" title="Next (→)">→</button><div class="transport-info"><b id="transportTitle">Ready to present</b><small id="transportSub">Load a question set to begin</small></div></div>
-        <div class="transport-right"><span id="timeDisplay">00:00 / 00:00</span><input type="range" id="seekBar" min="0" max="100" value="0" aria-label="Seek audio"><div class="record-controls"><button id="recordBtn" class="record-btn">● Record</button><button id="pauseRecordBtn" disabled>Ⅱ Pause</button><span id="recordTimer">00:00</span></div></div>
+        <div class="transport-right"><span id="timeDisplay">00:00 / 00:00</span><input type="range" id="seekBar" min="0" max="100" value="0" aria-label="Seek audio"><div class="record-controls"><button id="recordBtn" class="record-btn">● Record</button><button id="pauseRecordBtn" disabled>Ⅱ Pause</button><button id="stopRecordBtn" disabled>■ Stop</button><span id="recordTimer">00:00</span></div></div>
       </div>
-      <div class="keyboard-hint"><kbd>←</kbd><kbd>→</kbd> Navigate <span></span><kbd>SPACE</kbd> Play / Pause <span></span><kbd>F</kbd> Fullscreen</div>
+      <div id="recordPreviewPanel" class="record-preview-panel" hidden><div class="record-preview-head"><b>Recording Preview</b><button id="closeRecordPreview" type="button">✕</button></div><video id="recordPreviewVideo" controls playsinline></video><a id="recordDownloadLink" class="record-download" download="MCQ-Studio-Recording.webm">⬇ Download WebM</a></div>
+      <div class="keyboard-hint><kbd>←</kbd><kbd>→</kbd> Navigate <span></span><kbd>SPACE</kbd> Play / Pause <span></span><kbd>F</kbd> Fullscreen</div>
     </section>
   </main>
 </div>
