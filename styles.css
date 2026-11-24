@@ -188,3 +188,9 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
  button,.file-row,.upload-box,.sync-set,.sync-jump{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
  .btn:active,.round-btn:active,.canvas-controls button:active,.question-number-grid button:active{transform:scale(.97)}
 }
+
+/* Font scaling repair: ensure portrait/mobile typography respects the JS font-scale variable */
+.portrait-canvas .question-text{font-size:calc(clamp(13px,2.2vw,30px) * var(--font-scale,1))!important}
+.portrait-canvas .option{font-size:calc(clamp(10px,1.7vw,21px) * var(--font-scale,1))!important}
+.portrait-canvas .explanation-text{font-size:calc(clamp(12px,2vw,28px) * var(--font-scale,1))!important}
+@media(max-width:650px){.question-text{font-size:calc(clamp(15px,3.4vw,26px) * var(--font-scale,1))!important}.option{font-size:calc(clamp(10px,2vw,15px) * var(--font-scale,1))!important}.explanation-text{font-size:calc(clamp(13px,2.8vw,20px) * var(--font-scale,1))!important}}
