@@ -194,3 +194,5 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .portrait-canvas .option{font-size:calc(clamp(10px,1.7vw,21px) * var(--font-scale,1))!important}
 .portrait-canvas .explanation-text{font-size:calc(clamp(12px,2vw,28px) * var(--font-scale,1))!important}
 @media(max-width:650px){.question-text{font-size:calc(clamp(15px,3.4vw,26px) * var(--font-scale,1))!important}.option{font-size:calc(clamp(10px,2vw,15px) * var(--font-scale,1))!important}.explanation-text{font-size:calc(clamp(13px,2.8vw,20px) * var(--font-scale,1))!important}}
+
+.record-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.record-controls button{border:1px solid #395779;border-radius:7px;background:#132945;color:#dce8fa;padding:7px 10px;font-size:10px;cursor:pointer}.record-controls .record-btn{background:#a82c49;border-color:#e65d7a;color:#fff;font-weight:800}.record-controls button:disabled{opacity:.45;cursor:not-allowed}#recordTimer{font-size:10px;color:#9db5d5;min-width:45px}@media(max-width:650px){.record-controls{width:100%;justify-content:center}.record-controls button{min-height:36px}}
