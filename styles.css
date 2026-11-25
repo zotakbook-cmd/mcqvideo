@@ -217,3 +217,4 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .stage-enter .question-kicker,.stage-enter .question-text{animation:mcqTextIn .45s ease both!important;}
 .stage-enter .options-grid .option{animation:mcqOptionIn .4s ease both!important;}
 .stage-enter .explanation-text{animation:mcqExplain .45s ease both!important;}
+\n/* Stage-specific reveals: question stays anchored; options/explanation animate on their stage entry */\n.presentation.stage-reveal .options-grid .option{animation:mcqOptionIn .42s ease both!important;}\n.presentation.stage-reveal .explanation-text{animation:mcqExplain .48s ease both!important;}\n.presentation.stage-enter .options-grid .option{animation:mcqOptionIn .42s ease both!important;}\n.presentation.stage-enter .explanation-text{animation:mcqExplain .48s ease both!important;}\n
