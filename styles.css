@@ -245,3 +245,8 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .mcq-wipe-option{animation:mcqWipeReveal var(--wipe-duration,.8s) steps(var(--wipe-steps,30),end) var(--wipe-delay,0s) both!important;clip-path:inset(0 100% 0 0);}.option.correct{animation-delay:var(--correct-delay,0s)!important;}
 .presentation.stage-reveal .explanation-text,.presentation.stage-enter .explanation-text{animation:mcqWipeReveal var(--wipe-duration,2s) linear both!important;clip-path:inset(0 100% 0 0);}
 @media(prefers-reduced-motion:reduce){.mcq-wipe-option,.presentation.stage-enter .question-text,.presentation.stage-reveal .explanation-text,.presentation.stage-enter .explanation-text{animation:none!important;clip-path:none!important}}
+
+/* Force staged sequential option box-and-text wipe; override legacy option animations */
+.presentation .stage-options-reveal .option.mcq-wipe-option{animation:mcqWipeReveal var(--wipe-duration,.8s) steps(var(--wipe-steps,30),end) var(--wipe-delay,0s) both!important;clip-path:inset(0 100% 0 0)!important;opacity:1!important;transform:none!important;}
+.presentation.stage-reveal .stage-options-reveal .option{animation:none!important;}
+.presentation.stage-reveal .stage-options-reveal .option.mcq-wipe-option{animation:mcqWipeReveal var(--wipe-duration,.8s) steps(var(--wipe-steps,30),end) var(--wipe-delay,0s) both!important;}
