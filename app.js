@@ -17,24 +17,26 @@ async function restoreWorkspace(){try{const saved=await dbGet('current');if(!sav
 function notify(m){const e=$('toast');e.textContent=m;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),2400)}
 function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function parseQuestions(raw){
- const text=String(raw||'').replace(/^\uFEFF/,'').replace(/\r/g,'').trim();
+ const text=String(raw||'').replace(/^\\uFEFF/,'').replace(/\\r/g,'').trim();
  if(!text)return [];
- // Normalize headings and split on each hash marker, regardless of whether blank lines are present.
- const blocks=text.split(/(?:^|\n)\s*#\s*/).map(v=>v.trim()).filter(Boolean);
+ const blocks=text.split(/(?:^|\\n)\\s*#\\s*/).map(v=>v.trim()).filter(Boolean);
  const parsed=[];
+ const opt=/^([A-D])[.)、:：-]\\s*(.+)$/i;
+ const isQuestionBlock=b=>b.split(/\\n/).some(line=>opt.test(line.trim()));
  for(let i=0;i<blocks.length;){
-  const qb=blocks[i++]||'', ab=blocks[i++]||'', ex=blocks[i++]||'';
-  const lines=qb.split(/\n/).map(v=>v.trim()).filter(Boolean);
-  const opt=/^([A-D])[.)、:：-]\s*(.+)$/i;
+  const qb=blocks[i++];
+  if(!isQuestionBlock(qb))continue;
+  const lines=qb.split(/\\n/).map(v=>v.trim()).filter(Boolean);
   const options=lines.filter(v=>opt.test(v)).map(v=>{const m=v.match(opt);return {key:m[1].toUpperCase(),text:m[2].trim()}});
   const question=lines.filter(v=>!opt.test(v)).join(' ');
-  const am=ab.match(/(?:उत्तर|answer)?\s*[:：-]?\s*([A-D])\b/i);
-  const answer=am?am[1].toUpperCase():'';
-  if(question&&options.length>=2&&options.some(o=>o.key===answer)){
-    parsed.push({question,options,answer,explanation:ex,timestamps:[null,null,null,null]});
-  }else if(qb&&i>=blocks.length){
-    // Informative but not discarded silently; incomplete final block remains unparsed.
-  }
+  const ab=blocks[i]||'';
+  const am=ab.match(/^(?:उत्तर|answer)?\\s*[:：-]?\\s*([A-D])\\s*$/i);
+  if(!question||options.length<2||new Set(options.map(o=>o.key)).size!==options.length||!am){continue}
+  const answer=am[1].toUpperCase();i++;
+  let explanation='';
+  if(i<blocks.length&&!isQuestionBlock(blocks[i]))explanation=blocks[i++];
+  if(!options.some(o=>o.key===answer))continue;
+  parsed.push({question,options,answer,explanation,timestamps:[null,null,null,null]});
  }
  return parsed;
 }
@@ -72,7 +74,7 @@ function updateAudioUI(){const d=Number.isFinite(audio.duration)?audio.duration:
 function go(delta){if(!state.questions.length)return;if(!state.quizMode&&!state.hideInitial&&delta<0&&state.index===0&&state.stage===0){state.hideInitial=true;state.manualHold=true;state.holdUntil=nextTimestampAfter(audio.currentTime);render();return;}if(state.quizMode){const next=state.index+delta;if(next<0||next>=state.questions.length)return;state.index=next;state.stage=0;state.hideInitial=false;state.quizAnswered=state.quizAnswers[next]??null;saveWorkspaceSoon();state.manualHold=true;state.holdUntil=nextTimestampAfter(audio.currentTime);render();return}if(state.hideInitial&&delta>0){state.hideInitial=false;state.stage=0;state.index=0;state.lastAnimatedIndex=-1;$('presentation').classList.remove('stage-enter','stage-reveal');state.manualHold=true;state.holdUntil=nextTimestampAfter(audio.currentTime);render();return;}const abs=stageAbsolute(state.index,state.stage)+delta,total=state.questions.length*4;if(abs<0||abs>=total)return;state.index=Math.floor(abs/4);state.stage=abs%4;state.hideInitial=false;state.quizAnswered=null;saveWorkspaceSoon();state.manualHold=true;state.holdUntil=nextTimestampAfter(audio.currentTime);render()}
 function nextTimestampAfter(t){const events=allEvents().filter(e=>e.time>t+0.01);return events.length?Math.min(...events.map(e=>e.time)):null}
 function allEvents(){const ev=[];state.questions.forEach((q,i)=>q.timestamps.forEach((t,s)=>{if(t!==null&&Number.isFinite(t))ev.push({time:t,index:i,stage:s})}));return ev.sort((a,b)=>a.time-b.time)}
-function syncTick(){if(!audio.src||!$('autoSync').checked)return;const t=audio.currentTime;if(state.manualHold){if(state.holdUntil!==null&&t<state.holdUntil)return;state.manualHold=false;state.holdUntil=null}
+function syncTick(){if(!audio.src||!$('autoSync').checked)return;const t=audio.currentTime;if(state.manualHold){if(state.holdUntil===null||t<state.holdUntil)return;state.manualHold=false;state.holdUntil=null}
  const ev=allEvents().filter(e=>e.time<=t+0.02);if(!ev.length)return;const target=ev[ev.length-1];if(target.index!==state.index||target.stage!==state.stage||state.hideInitial){if(state.hideInitial&&target.stage===0)state.lastAnimatedIndex=-1;state.index=target.index;state.stage=target.stage;state.hideInitial=false;render()}}
 function toggleFullscreen(){const target=$('previewWrap');if(!document.fullscreenElement)target.requestFullscreen?.().catch(()=>notify('Canvas fullscreen उपलब्ध नहीं है'));else document.exitFullscreen?.()}
 function togglePresentation(){state.presentationMode=!state.presentationMode;document.body.classList.toggle('presentation-mode',state.presentationMode);if(state.presentationMode&&!document.fullscreenElement)$('previewWrap').requestFullscreen?.().catch(()=>{});if(!state.presentationMode&&document.fullscreenElement)document.exitFullscreen?.()}
