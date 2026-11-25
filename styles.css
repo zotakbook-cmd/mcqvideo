@@ -263,3 +263,12 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .presentation .stage-explanation-reveal .mcq-char{animation:mcqCharAppear .01s steps(1,end) both!important;}
 .presentation .question-text{clip-path:none!important;}
 @media(prefers-reduced-motion:reduce){.mcq-char{animation:none!important;opacity:1!important;}}
+
+/* MCQ Studio: unified character reveal for Question, Options and Explanation */
+@keyframes mcqFinalChar { from { opacity:0; } to { opacity:1; } }
+@keyframes mcqFinalBox { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+.presentation .question-text,.presentation .stage-explanation-reveal { clip-path:none!important; }
+.presentation .question-text .mcq-char,.presentation .stage-explanation-reveal .mcq-char,.presentation .stage-options-reveal .option .mcq-char { animation:mcqFinalChar .01s steps(1,end) both!important; }
+.presentation .stage-options-reveal .option { clip-path:none!important; animation:mcqFinalBox .2s steps(1,end) both!important; }
+.presentation .stage-options-static .option { animation:none!important; }
+@media(prefers-reduced-motion:reduce){.presentation .question-text .mcq-char,.presentation .stage-options-reveal .option,.presentation .stage-options-reveal .option .mcq-char,.presentation .stage-explanation-reveal .mcq-char{animation:none!important;opacity:1!important;}}
