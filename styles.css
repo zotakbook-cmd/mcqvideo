@@ -218,3 +218,6 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .stage-enter .options-grid .option{animation:mcqOptionIn .4s ease both!important;}
 .stage-enter .explanation-text{animation:mcqExplain .45s ease both!important;}
 \n/* Stage-specific reveals: question stays anchored; options/explanation animate on their stage entry */\n.presentation.stage-reveal .options-grid .option{animation:mcqOptionIn .42s ease both!important;}\n.presentation.stage-reveal .explanation-text{animation:mcqExplain .48s ease both!important;}\n.presentation.stage-enter .options-grid .option{animation:mcqOptionIn .42s ease both!important;}\n.presentation.stage-enter .explanation-text{animation:mcqExplain .48s ease both!important;}\n
+/* Directly attached stage reveal animation selectors */
+.canvas-content .options-grid.stage-options-reveal .option{animation:mcqOptionIn .55s cubic-bezier(.2,.7,.25,1) both!important;}
+.canvas-content .explanation-text.stage-explanation-reveal{animation:mcqExplain .65s cubic-bezier(.2,.7,.25,1) both!important;}
