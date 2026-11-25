@@ -272,9 +272,3 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .presentation .stage-options-reveal .option { clip-path:none!important; animation:mcqFinalBox .2s steps(1,end) both!important; }
 .presentation .stage-options-static .option { animation:none!important; }
 @media(prefers-reduced-motion:reduce){.presentation .question-text .mcq-char,.presentation .stage-options-reveal .option,.presentation .stage-options-reveal .option .mcq-char,.presentation .stage-explanation-reveal .mcq-char{animation:none!important;opacity:1!important;}}
-
-/* ERASER-style reveal, text remains intact (no grapheme wrappers) */
-@keyframes mcqEraseReveal{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
-#presentation .mcq-erase-reveal{clip-path:inset(0 100% 0 0)!important;animation:mcqEraseReveal .95s ease-out both!important;}
-#presentation .stage-options-reveal .option.mcq-erase-option{clip-path:inset(0 100% 0 0)!important;animation:mcqEraseReveal .72s ease-out var(--erase-delay,0s) both!important;opacity:1!important;transform:none!important;}
-@media(prefers-reduced-motion:reduce){#presentation .mcq-erase-reveal,#presentation .mcq-erase-option{clip-path:none!important;animation:none!important;}}
