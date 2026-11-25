@@ -272,12 +272,3 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .presentation .stage-options-reveal .option { clip-path:none!important; animation:mcqFinalBox .2s steps(1,end) both!important; }
 .presentation .stage-options-static .option { animation:none!important; }
 @media(prefers-reduced-motion:reduce){.presentation .question-text .mcq-char,.presentation .stage-options-reveal .option,.presentation .stage-options-reveal .option .mcq-char,.presentation .stage-explanation-reveal .mcq-char{animation:none!important;opacity:1!important;}}
-
-/* Clean reset: line-by-line left-to-right wipe, no per-character animations */
-@keyframes mcqLineWipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
-.mcq-wipe-line{display:block;white-space:normal;clip-path:inset(0 100% 0 0);animation:mcqLineWipe .7s cubic-bezier(.2,.65,.25,1) var(--line-delay,0s) both!important;}
-.presentation .question-text .mcq-char,.presentation .stage-explanation-reveal .mcq-char{animation:none!important;opacity:1!important;}
-.presentation .question-text,.presentation .stage-explanation-reveal{clip-path:none!important;}
-.presentation .stage-options-reveal .option.mcq-option-wipe{clip-path:inset(0 100% 0 0)!important;animation:mcqLineWipe .75s cubic-bezier(.2,.65,.25,1) var(--wipe-delay,0s) both!important;opacity:1!important;transform:none!important;}
-.presentation .stage-options-reveal .option.mcq-option-wipe .mcq-char{animation:none!important;opacity:1!important;}
-@media(prefers-reduced-motion:reduce){.mcq-wipe-line,.mcq-option-wipe{animation:none!important;clip-path:none!important;}}
