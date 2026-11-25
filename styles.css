@@ -278,3 +278,14 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .presentation.stage-enter .canvas-content .stage-options-static .option,.presentation.stage-reveal .canvas-content .stage-options-static .option{clip-path:none!important;animation:none!important}
 .presentation.stage-enter .canvas-content .stage-explanation-reveal,.presentation.stage-reveal .canvas-content .stage-explanation-reveal{animation:mcqCleanWipe 1s cubic-bezier(.2,.65,.25,1) both!important;clip-path:inset(0 100% 0 0)!important}
 @media(prefers-reduced-motion:reduce){.presentation.stage-enter .canvas-content .question-text,.presentation.stage-reveal .canvas-content .question-text,.presentation.stage-enter .canvas-content .stage-options-reveal .option,.presentation.stage-reveal .canvas-content .stage-options-reveal .option,.presentation.stage-enter .canvas-content .stage-explanation-reveal,.presentation.stage-reveal .canvas-content .stage-explanation-reveal{animation:none!important;clip-path:none!important}}
+
+/* Reliable stage-specific reveal overrides */
+.presentation.stage-show-1 .canvas-content .question-text{visibility:visible!important;opacity:1!important;clip-path:inset(0 100% 0 0);animation:mcqCleanWipe .8s cubic-bezier(.2,.65,.25,1) both!important}
+.presentation.stage-show-2 .canvas-content .options-grid.stage-options-reveal .option{visibility:visible!important;opacity:1!important;clip-path:inset(0 100% 0 0);animation:mcqCleanOption .65s cubic-bezier(.2,.65,.25,1) var(--wipe-delay,0s) both!important}
+.presentation.stage-show-2 .canvas-content .options-grid.stage-options-reveal .option:nth-child(1){--wipe-delay:0s!important}
+.presentation.stage-show-2 .canvas-content .options-grid.stage-options-reveal .option:nth-child(2){--wipe-delay:.18s!important}
+.presentation.stage-show-2 .canvas-content .options-grid.stage-options-reveal .option:nth-child(3){--wipe-delay:.36s!important}
+.presentation.stage-show-2 .canvas-content .options-grid.stage-options-reveal .option:nth-child(4){--wipe-delay:.54s!important}
+.presentation.stage-show-4 .canvas-content .stage-explanation-reveal{visibility:visible!important;opacity:1!important;clip-path:inset(0 100% 0 0);animation:mcqCleanWipe 1s cubic-bezier(.2,.65,.25,1) both!important}
+.presentation.stage-show-3 .canvas-content .option.correct{animation:mcqAnswerPulse .5s ease both!important}
+@media(prefers-reduced-motion:reduce){.presentation.stage-show-1 .canvas-content .question-text,.presentation.stage-show-2 .canvas-content .options-grid.stage-options-reveal .option,.presentation.stage-show-4 .canvas-content .stage-explanation-reveal{animation:none!important;clip-path:none!important}}
