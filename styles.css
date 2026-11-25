@@ -265,3 +265,16 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .presentation.stage-reveal .canvas-content .stage-explanation-reveal,
 .presentation.stage-enter .canvas-content .stage-explanation-reveal{animation:mcqCleanWipe 1.15s cubic-bezier(.2,.65,.25,1) both!important;clip-path:inset(0 100% 0 0)!important}
 @media(prefers-reduced-motion:reduce){.presentation.stage-reveal .canvas-content .stage-options-reveal .option,.presentation.stage-enter .canvas-content .stage-options-reveal .option,.presentation.stage-reveal .canvas-content .stage-explanation-reveal,.presentation.stage-enter .canvas-content .stage-explanation-reveal{animation:none!important;clip-path:none!important}}
+
+/* Five-stage reveal sequence overrides */
+@keyframes mcqStageFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes mcqAnswerPulse{from{opacity:.45;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
+.presentation.stage-enter .canvas-content .question-text,.presentation.stage-reveal .canvas-content .question-text{animation:mcqCleanWipe .8s cubic-bezier(.2,.65,.25,1) both!important;clip-path:inset(0 100% 0 0)!important}
+.presentation.stage-enter .canvas-content .stage-options-reveal .option,.presentation.stage-reveal .canvas-content .stage-options-reveal .option{animation:mcqCleanOption .65s cubic-bezier(.2,.65,.25,1) var(--wipe-delay,0s) both!important;clip-path:inset(0 100% 0 0)!important;opacity:1!important;transform:none!important}
+.presentation.stage-enter .canvas-content .stage-options-reveal .option:nth-child(1),.presentation.stage-reveal .canvas-content .stage-options-reveal .option:nth-child(1){animation-delay:0s!important}
+.presentation.stage-enter .canvas-content .stage-options-reveal .option:nth-child(2),.presentation.stage-reveal .canvas-content .stage-options-reveal .option:nth-child(2){animation-delay:.18s!important}
+.presentation.stage-enter .canvas-content .stage-options-reveal .option:nth-child(3),.presentation.stage-reveal .canvas-content .stage-options-reveal .option:nth-child(3){animation-delay:.36s!important}
+.presentation.stage-enter .canvas-content .stage-options-reveal .option:nth-child(4),.presentation.stage-reveal .canvas-content .stage-options-reveal .option:nth-child(4){animation-delay:.54s!important}
+.presentation.stage-enter .canvas-content .stage-options-static .option,.presentation.stage-reveal .canvas-content .stage-options-static .option{clip-path:none!important;animation:none!important}
+.presentation.stage-enter .canvas-content .stage-explanation-reveal,.presentation.stage-reveal .canvas-content .stage-explanation-reveal{animation:mcqCleanWipe 1s cubic-bezier(.2,.65,.25,1) both!important;clip-path:inset(0 100% 0 0)!important}
+@media(prefers-reduced-motion:reduce){.presentation.stage-enter .canvas-content .question-text,.presentation.stage-reveal .canvas-content .question-text,.presentation.stage-enter .canvas-content .stage-options-reveal .option,.presentation.stage-reveal .canvas-content .stage-options-reveal .option,.presentation.stage-enter .canvas-content .stage-explanation-reveal,.presentation.stage-reveal .canvas-content .stage-explanation-reveal{animation:none!important;clip-path:none!important}}
