@@ -237,3 +237,11 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 @keyframes mcqQuestionWipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 .presentation.stage-enter .question-text{animation:mcqQuestionWipe .9s cubic-bezier(.2,.65,.25,1) both!important;opacity:1!important;transform:none!important}
 @media(prefers-reduced-motion:reduce){.presentation.stage-enter .question-text{animation:none!important;clip-path:none!important}}
+
+/* Character-paced wipe reveals for question, options and explanation */
+@keyframes mcqWipeReveal{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.presentation.stage-enter .question-text{animation:mcqWipeReveal var(--wipe-duration,1.5s) linear both!important;clip-path:inset(0 100% 0 0)}
+.presentation.stage-enter .question-text{--wipe-duration:calc(max(1, var(--question-chars,40))*35ms)}
+.mcq-wipe-option{animation:mcqWipeReveal var(--wipe-duration,.8s) linear var(--wipe-delay,0s) both!important;clip-path:inset(0 100% 0 0);}
+.presentation.stage-reveal .explanation-text,.presentation.stage-enter .explanation-text{animation:mcqWipeReveal var(--wipe-duration,2s) linear both!important;clip-path:inset(0 100% 0 0);}
+@media(prefers-reduced-motion:reduce){.mcq-wipe-option,.presentation.stage-enter .question-text,.presentation.stage-reveal .explanation-text,.presentation.stage-enter .explanation-text{animation:none!important;clip-path:none!important}}
