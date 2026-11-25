@@ -232,3 +232,11 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 
 /* Fullscreen control inside the canvas, top-right */
 .canvas-fullscreen-btn{position:absolute;top:10px;right:10px;z-index:6;border:1px solid #83a5d633;border-radius:8px;background:#142c4b99;color:#d8e7fb;padding:6px 10px;font-size:clamp(10px,.85vw,14px);cursor:pointer;backdrop-filter:blur(5px);opacity:.72;transition:opacity .2s,background .2s}.canvas-fullscreen-btn:hover{opacity:1;background:#24517e}
+
+/* Options-only sequential wipe reveal (leave question, answer and explanation untouched) */
+@keyframes mcqOptionWipeOnly{from{clip-path:inset(0 100% 0 0);opacity:.25;transform:translateX(-8px)}to{clip-path:inset(0 0 0 0);opacity:1;transform:translateX(0)}}
+.canvas-content .options-grid.stage-options-reveal .option{animation:mcqOptionWipeOnly .65s cubic-bezier(.22,.75,.2,1) both!important;}
+.canvas-content .options-grid.stage-options-reveal .option:nth-child(1){animation-delay:0s!important}
+.canvas-content .options-grid.stage-options-reveal .option:nth-child(2){animation-delay:.35s!important}
+.canvas-content .options-grid.stage-options-reveal .option:nth-child(3){animation-delay:.70s!important}
+.canvas-content .options-grid.stage-options-reveal .option:nth-child(4){animation-delay:1.05s!important}
