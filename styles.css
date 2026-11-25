@@ -206,3 +206,7 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .canvas-content .explanation-text{max-width:100%;}
 .canvas-content:has(.explanation-text){justify-content:flex-start!important;}
 .canvas-content .options-grid:has(.explanation-text){grid-template-columns:1fr!important;}
+
+/* Stable canvas layout: keep text anchored and animate only when question index changes */
+.canvas-content{justify-content:flex-start!important;padding-top:2.5%!important;}
+.question-kicker,.question-text,.options-grid .option,.option.correct,.answer-banner,.explanation-text{animation:none!important;}
