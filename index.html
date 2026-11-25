@@ -38,6 +38,16 @@
       <div class="file-row" id="audioFileTrigger" role="button" tabindex="0"><span class="file-symbol">♫</span><span><b>Continuous audio track</b><small id="audioName">No file selected</small></span></div><input id="audioFile" type="file" accept="audio/*" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
 
       <div class="sidebar-divider"></div>
+      <section id="textTimingPanel" class="text-timing-panel">
+        <div class="section-heading"><span>INLINE TEXT TIMING</span><span class="optional">NEW</span></div>
+        <div class="timeline-help">पूरा text paste करें। शब्द पर Hover करके + क्लिक करने से Audio का current time उस जगह Marker बनेगा।</div>
+        <textarea id="timingTextInput" spellcheck="false" placeholder="यहाँ पूरा text paste करें..."></textarea>
+        <button class="btn btn-primary full" id="renderTimingText">Text Timing Editor खोलें</button>
+        <div class="text-timing-tools"><button id="textTimingToggle" class="btn btn-outline full">▶ Text Timing Preview OFF</button><button id="clearTextMarkers" class="btn btn-quiet full">Markers Clear करें</button></div>
+        <div id="timingTextEditor" class="timing-text-editor"></div>
+        <div id="timingMarkerInfo" class="timing-marker-info"></div>
+      </section>
+      <div class="sidebar-divider"></div>
       <div id="timelinePanel"></div>
       <div class="sidebar-divider"></div>
       <div class="section-heading"><span>PLAYBACK</span></div>
