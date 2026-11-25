@@ -67,13 +67,39 @@ function renderQuizReview(){const content=$('canvasContent');let html='<div clas
 // Inline text timing: marker anchors are word indices in the standalone text.
 function timingWords(){return state.textTimingText.match(/\S+/g)||[]}
 function renderTextTimingEditor(){
- const box=$('timingTextEditor');if(!box)return;const words=timingWords(),markers=[...state.textTimingMarkers].sort((a,b)=>a.wordIndex-b.wordIndex);
- let html='';words.forEach((w,i)=>{const m=markers.find(x=>x.wordIndex===i);if(m)html+='<button class="text-time-marker" data-marker="'+m.id+'" title="Audio '+formatTime(m.time)+' — seek">◉ '+formatTime(m.time)+'</button> ';html+='<span class="timing-word" data-word="'+i+'">'+escapeHTML(w)+'<button class="word-time-add" data-word="'+i+'" title="Current audio time set करें">+</button></span> ';});
- box.innerHTML=html;box.querySelectorAll('.word-time-add').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const wi=+b.dataset.word;const existing=state.textTimingMarkers.find(m=>m.wordIndex===wi);if(existing){existing.time=audio.currentTime}else state.textTimingMarkers.push({id:'tm'+Date.now()+Math.random().toString(16).slice(2),wordIndex:wi,time:audio.currentTime});state.textTimingMarkers.sort((a,b)=>a.wordIndex-b.wordIndex);renderTextTimingEditor();saveWorkspaceSoon();notify('Text Marker: '+formatTime(audio.currentTime)}));
- box.querySelectorAll('.text-time-marker').forEach(b=>b.addEventListener('click',()=>{const m=state.textTimingMarkers.find(x=>x.id===b.dataset.marker);if(m){audio.currentTime=m.time;audio.play().catch(()=>{});syncTextTiming()}}));
- box.querySelectorAll('.timing-word').forEach(w=>w.addEventListener('mouseenter',()=>{const idx=+w.dataset.word;const m=state.textTimingMarkers.find(x=>x.wordIndex===idx);w.classList.toggle('has-marker',!!m)}));
+ const box=$('timingTextEditor');
+ if(!box)return;
+ const words=timingWords();
+ const markers=[...state.textTimingMarkers].sort((a,b)=>a.wordIndex-b.wordIndex);
+ let html='';
+ words.forEach((w,i)=>{
+  const m=markers.find(x=>x.wordIndex===i);
+  if(m) html+='<button class="text-time-marker" data-marker="'+m.id+'" title="Audio '+formatTime(m.time)+' — seek">◉ '+formatTime(m.time)+'</button> ';
+  html+='<span class="timing-word" data-word="'+i+'">'+escapeHTML(w)+'<button class="word-time-add" data-word="'+i+'" title="Current audio time set करें">+</button></span> ';
+ });
+ box.innerHTML=html;
+ box.querySelectorAll('.word-time-add').forEach(b=>{
+  b.addEventListener('click',e=>{
+   e.stopPropagation();
+   const wi=Number(b.dataset.word);
+   const existing=state.textTimingMarkers.find(m=>m.wordIndex===wi);
+   if(existing){existing.time=audio.currentTime;}
+   else {state.textTimingMarkers.push({id:'tm'+Date.now()+Math.random().toString(16).slice(2),wordIndex:wi,time:audio.currentTime});}
+   state.textTimingMarkers.sort((a,b)=>a.wordIndex-b.wordIndex);
+   renderTextTimingEditor();
+   saveWorkspaceSoon();
+   notify('Text Marker: '+formatTime(audio.currentTime));
+  });
+ });
+ box.querySelectorAll('.text-time-marker').forEach(b=>{
+  b.addEventListener('click',()=>{
+   const m=state.textTimingMarkers.find(x=>x.id===b.dataset.marker);
+   if(m){audio.currentTime=m.time;audio.play().catch(()=>{});syncTextTiming();}
+  });
+ });
  $('timingMarkerInfo').textContent=state.textTimingMarkers.length+' marker(s) • Hover शब्द पर + क्लिक करें';
 }
+
 function syncTextTiming(){
  if(!state.textTimingActive||!state.textTimingText)return;
  const markers=[...state.textTimingMarkers].sort((a,b)=>a.time-b.time),t=audio.currentTime;
