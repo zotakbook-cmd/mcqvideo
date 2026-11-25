@@ -245,3 +245,23 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .canvas-content .stage-options-static .option{clip-path:none!important;animation:none!important}
 .canvas-content .stage-explanation-reveal{clip-path:inset(0 100% 0 0);animation:mcqCleanWipe 1.15s cubic-bezier(.2,.65,.25,1) both!important}
 @media(prefers-reduced-motion:reduce){.presentation.stage-enter .question-text,.canvas-content .stage-options-reveal .option,.canvas-content .stage-explanation-reveal{animation:none!important;clip-path:none!important}}
+
+/* Cascade repair: override legacy high-specificity stage animation rules */
+.presentation.stage-reveal .canvas-content .stage-options-reveal .option,
+.presentation.stage-enter .canvas-content .stage-options-reveal .option{
+ animation:mcqCleanOption .65s cubic-bezier(.2,.65,.25,1) var(--wipe-delay,0s) both!important;
+ clip-path:inset(0 100% 0 0)!important;opacity:1!important;transform:none!important;
+}
+.presentation.stage-reveal .canvas-content .stage-options-reveal .option:nth-child(1),
+.presentation.stage-enter .canvas-content .stage-options-reveal .option:nth-child(1){--wipe-delay:0s}
+.presentation.stage-reveal .canvas-content .stage-options-reveal .option:nth-child(2),
+.presentation.stage-enter .canvas-content .stage-options-reveal .option:nth-child(2){--wipe-delay:.12s}
+.presentation.stage-reveal .canvas-content .stage-options-reveal .option:nth-child(3),
+.presentation.stage-enter .canvas-content .stage-options-reveal .option:nth-child(3){--wipe-delay:.24s}
+.presentation.stage-reveal .canvas-content .stage-options-reveal .option:nth-child(4),
+.presentation.stage-enter .canvas-content .stage-options-reveal .option:nth-child(4){--wipe-delay:.36s}
+.presentation.stage-reveal .canvas-content .stage-options-static .option,
+.presentation.stage-enter .canvas-content .stage-options-static .option{animation:none!important;clip-path:none!important}
+.presentation.stage-reveal .canvas-content .stage-explanation-reveal,
+.presentation.stage-enter .canvas-content .stage-explanation-reveal{animation:mcqCleanWipe 1.15s cubic-bezier(.2,.65,.25,1) both!important;clip-path:inset(0 100% 0 0)!important}
+@media(prefers-reduced-motion:reduce){.presentation.stage-reveal .canvas-content .stage-options-reveal .option,.presentation.stage-enter .canvas-content .stage-options-reveal .option,.presentation.stage-reveal .canvas-content .stage-explanation-reveal,.presentation.stage-enter .canvas-content .stage-explanation-reveal{animation:none!important;clip-path:none!important}}
