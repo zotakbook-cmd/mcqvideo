@@ -200,3 +200,9 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 
 .quiz-result-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:16px}.quiz-review,.quiz-back-result{padding:11px 18px;border-radius:10px;border:1px solid #5077a4;background:#15304f;color:#eef6ff;font-weight:800;cursor:pointer}.quiz-review-list{text-align:left;max-height:65%;overflow:auto;margin:3% auto; width:95%}.quiz-review-item{padding:12px 15px;margin:10px 0;border:1px solid #ffffff20;background:#ffffff06;border-radius:12px}.quiz-review-item h3{font-size:clamp(13px,1.5vw,24px);margin:0 0 10px}.quiz-review-line,.quiz-review-explanation{font-size:clamp(11px,1.2vw,20px);line-height:1.5;margin:7px 0}.review-correct{color:#67e5ae}.review-wrong{color:#ff7a8c}.review-key{color:#8cc1ff;font-weight:700}.quiz-review-explanation{opacity:.9}@media(max-width:650px){.quiz-result-actions{gap:8px}.quiz-review,.quiz-back-result{padding:9px 12px;font-size:11px}.quiz-review-item{padding:10px}.quiz-review-list{max-height:60%}}
 
+
+/* Four-stage layout: explanations appear below options and scroll to the bottom */
+.canvas-content{overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin;}
+.canvas-content .explanation-text{max-width:100%;}
+.canvas-content:has(.explanation-text){justify-content:flex-start!important;}
+.canvas-content .options-grid:has(.explanation-text){grid-template-columns:1fr!important;}
