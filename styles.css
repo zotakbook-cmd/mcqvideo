@@ -289,3 +289,14 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .presentation.stage-show-4 .canvas-content .stage-explanation-reveal{visibility:visible!important;opacity:1!important;clip-path:inset(0 100% 0 0);animation:mcqCleanWipe 1s cubic-bezier(.2,.65,.25,1) both!important}
 .presentation.stage-show-3 .canvas-content .option.correct{animation:mcqAnswerPulse .5s ease both!important}
 @media(prefers-reduced-motion:reduce){.presentation.stage-show-1 .canvas-content .question-text,.presentation.stage-show-2 .canvas-content .options-grid.stage-options-reveal .option,.presentation.stage-show-4 .canvas-content .stage-explanation-reveal{animation:none!important;clip-path:none!important}}
+
+/* ID-based stage visibility repair (presentation is an ID, not a class) */
+#presentation.stage-show-1 #canvasContent .question-text{visibility:visible!important;opacity:1!important;clip-path:none!important;animation:mcqCleanWipe .8s cubic-bezier(.2,.65,.25,1) both!important;display:block!important}
+#presentation.stage-show-2 #canvasContent .options-grid.stage-options-reveal{display:grid!important;visibility:visible!important;opacity:1!important}
+#presentation.stage-show-2 #canvasContent .options-grid.stage-options-reveal .option{visibility:visible!important;opacity:1!important;clip-path:inset(0 100% 0 0)!important;animation:mcqCleanOption .65s cubic-bezier(.2,.65,.25,1) var(--wipe-delay,0s) both!important;display:flex!important}
+#presentation.stage-show-2 #canvasContent .options-grid.stage-options-reveal .option:nth-child(1){--wipe-delay:0s!important}
+#presentation.stage-show-2 #canvasContent .options-grid.stage-options-reveal .option:nth-child(2){--wipe-delay:.18s!important}
+#presentation.stage-show-2 #canvasContent .options-grid.stage-options-reveal .option:nth-child(3){--wipe-delay:.36s!important}
+#presentation.stage-show-2 #canvasContent .options-grid.stage-options-reveal .option:nth-child(4){--wipe-delay:.54s!important}
+#presentation.stage-show-4 #canvasContent .stage-explanation-reveal{display:block!important;visibility:visible!important;opacity:1!important;clip-path:inset(0 100% 0 0)!important;animation:mcqCleanWipe 1s cubic-bezier(.2,.65,.25,1) both!important}
+#presentation.stage-show-3 #canvasContent .option.correct{animation:mcqAnswerPulse .5s ease both!important}
