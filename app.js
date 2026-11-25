@@ -2,7 +2,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 window.addEventListener('error',e=>{console.error('MCQ Studio runtime error',e.error||e.message);const s=document.getElementById('workspaceStatus');if(s)s.textContent='JavaScript error: '+(e.message||'check Console');});
-const state={questions:[],index:0,stage:0,audioUrl:null,presentationMode:false,manualHold:false,holdUntil:null,timelineKey:null,orientation:'landscape',quizMode:false,quizAnswered:null,quizAnswers:{},quizFinished:false,textTimingText:'',textTimingMarkers:[],textTimingActive:false};
+const state={questions:[],index:0,stage:0,audioUrl:null,presentationMode:false,manualHold:false,holdUntil:null,timelineKey:null,orientation:'landscape',quizMode:false,quizAnswered:null,quizAnswers:{},quizFinished:false};
 const audio=$('audioPlayer');let toastTimer;
 // Persistent workspace (IndexedDB stores the audio Blob, not a temporary object URL)
 const DB_NAME='mcqstudio-workspace', DB_VERSION=1, STORE='workspace';
@@ -11,8 +11,8 @@ async function dbPut(key,value){const db=await dbOpen();return new Promise((reso
 async function dbGet(key){const db=await dbOpen();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readonly'),req=tx.objectStore(STORE).get(key);req.onsuccess=()=>{db.close();resolve(req.result)};req.onerror=()=>{db.close();reject(req.error)}})}
 let saveTimer;
 function saveWorkspaceSoon(){clearTimeout(saveTimer);saveTimer=setTimeout(saveWorkspace,500)}
-async function saveWorkspace(){try{await dbPut('current',{raw:$('questionInput').value, audioBlob:state.audioBlob||null,audioName:$('audioName').textContent, index:state.index,stage:state.stage,autoSync:$('autoSync').checked,autoplay:$('autoplay').checked,showProgress:$('showProgress').checked, orientation:state.orientation, timelineKey:state.timelineKey, timestamps:state.questions.map(q=>q.timestamps),audioTime:audio.currentTime||0, textTimingText:state.textTimingText, textTimingMarkers:state.textTimingMarkers, textTimingActive:state.textTimingActive});$('workspaceStatus').textContent='Saved locally'}catch(err){$('workspaceStatus').textContent='Save failed';console.warn('Workspace save failed',err)}}
-async function restoreWorkspace(){try{const saved=await dbGet('current');if(!saved)return false;if(saved.textTimingText){state.textTimingText=saved.textTimingText;$('timingTextInput').value=saved.textTimingText;state.textTimingMarkers=Array.isArray(saved.textTimingMarkers)?saved.textTimingMarkers:[];renderTextTimingEditor()}if(saved.raw){$('questionInput').value=saved.raw;loadQuestions(saved.raw);if(Array.isArray(saved.timestamps))saved.timestamps.forEach((ts,i)=>{if(state.questions[i]&&Array.isArray(ts))state.questions[i].timestamps=ts});state.index=Math.max(0,Math.min(saved.index||0,state.questions.length-1));state.stage=Math.max(0,Math.min(saved.stage||0,2));renderTimeline();render()}if(saved.audioBlob){state.audioBlob=saved.audioBlob;state.audioUrl=URL.createObjectURL(saved.audioBlob);audio.src=state.audioUrl;audio.load();audio.addEventListener('loadedmetadata',()=>{if(Number.isFinite(saved.audioTime))audio.currentTime=saved.audioTime},{once:true});$('audioName').textContent=saved.audioName||'Restored audio'}if(typeof saved.autoSync==='boolean')$('autoSync').checked=saved.autoSync;if(typeof saved.autoplay==='boolean')$('autoplay').checked=saved.autoplay;if(typeof saved.showProgress==='boolean')$('showProgress').checked=saved.showProgress;if(saved.orientation)applyOrientation(saved.orientation);return true}catch(err){console.warn('Workspace restore failed',err);return false}}
+async function saveWorkspace(){try{await dbPut('current',{raw:$('questionInput').value, audioBlob:state.audioBlob||null,audioName:$('audioName').textContent, index:state.index,stage:state.stage,autoSync:$('autoSync').checked,autoplay:$('autoplay').checked,showProgress:$('showProgress').checked, orientation:state.orientation, timelineKey:state.timelineKey, timestamps:state.questions.map(q=>q.timestamps),audioTime:audio.currentTime||0});$('workspaceStatus').textContent='Saved locally'}catch(err){$('workspaceStatus').textContent='Save failed';console.warn('Workspace save failed',err)}}
+async function restoreWorkspace(){try{const saved=await dbGet('current');if(!saved)return false;if(saved.raw){$('questionInput').value=saved.raw;loadQuestions(saved.raw);if(Array.isArray(saved.timestamps))saved.timestamps.forEach((ts,i)=>{if(state.questions[i]&&Array.isArray(ts))state.questions[i].timestamps=ts});state.index=Math.max(0,Math.min(saved.index||0,state.questions.length-1));state.stage=Math.max(0,Math.min(saved.stage||0,2));renderTimeline();render()}if(saved.audioBlob){state.audioBlob=saved.audioBlob;state.audioUrl=URL.createObjectURL(saved.audioBlob);audio.src=state.audioUrl;audio.load();audio.addEventListener('loadedmetadata',()=>{if(Number.isFinite(saved.audioTime))audio.currentTime=saved.audioTime},{once:true});$('audioName').textContent=saved.audioName||'Restored audio'}if(typeof saved.autoSync==='boolean')$('autoSync').checked=saved.autoSync;if(typeof saved.autoplay==='boolean')$('autoplay').checked=saved.autoplay;if(typeof saved.showProgress==='boolean')$('showProgress').checked=saved.showProgress;if(saved.orientation)applyOrientation(saved.orientation);return true}catch(err){console.warn('Workspace restore failed',err);return false}}
 
 function notify(m){const e=$('toast');e.textContent=m;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),2400)}
 function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -64,51 +64,6 @@ function render(){saveWorkspaceSoon();renderQuestionButtons();const q=current();
  $('transportSub').textContent=(state.quizMode?'Quiz mode • ':'')+'Question '+(state.index+1)+' of '+state.questions.length+' • Stage '+(state.stage+1)+' of 3';updateAudioUI();$('presentation').classList.toggle('answer-reveal',state.stage===1);$('presentation').classList.remove('stage-enter');void $('presentation').offsetWidth;$('presentation').classList.add('stage-enter')}
 function renderQuizReview(){const content=$('canvasContent');let html='<div class="question-kicker">✦ ANSWER SHEET</div><div class="quiz-review-list">';state.questions.forEach((q,i)=>{const chosen=state.quizAnswers[i]||null;html+='<section class="quiz-review-item"><div class="question-kicker">QUESTION '+String(i+1).padStart(2,'0')+'</div><div class="question-text">'+escapeHTML(q.question)+'</div><div class="options-grid quiz-options">';for(const o of q.options){const picked=chosen===o.key,correct=o.key===q.answer;html+='<div class="option quiz-option '+(correct?'correct':'')+(picked&&!correct?' incorrect':'')+(picked?' selected':'')+'"><span class="option-letter">'+o.key+'</span><span>'+escapeHTML(o.text)+'</span></div>'}html+='</div><div class="quiz-feedback"><div class="quiz-result">'+(chosen===q.answer?'✓ सही उत्तर!':chosen?'✕ गलत उत्तर':'उत्तर नहीं दिया')+' — सही उत्तर: '+q.answer+'</div><div class="explanation-text">'+escapeHTML(q.explanation||'व्याख्या उपलब्ध नहीं है।')+'</div></div></section>'});html+='</div><div class="quiz-result-actions"><button type="button" class="quiz-restart">फिर से Quiz दें</button><button type="button" class="quiz-back-result">Result पर वापस</button></div>';content.innerHTML=html;content.querySelector('.quiz-restart').onclick=(e)=>{e.stopPropagation();state.quizAnswers={};state.quizAnswered=null;state.quizFinished=false;state.index=0;state.stage=0;render()};content.querySelector('.quiz-back-result').onclick=()=>render();$('transportTitle').textContent='Answer Sheet';$('transportSub').textContent='Quiz-style review • सभी प्रश्न और उत्तर';updateAudioUI();}
 
-// Inline text timing: marker anchors are word indices in the standalone text.
-function timingWords(){return state.textTimingText.match(/\S+/g)||[]}
-function renderTextTimingEditor(){
- const box=$('timingTextEditor');
- if(!box)return;
- const words=timingWords();
- const markers=[...state.textTimingMarkers].sort((a,b)=>a.wordIndex-b.wordIndex);
- let html='';
- words.forEach((w,i)=>{
-  const m=markers.find(x=>x.wordIndex===i);
-  if(m) html+='<button class="text-time-marker" data-marker="'+m.id+'" title="Audio '+formatTime(m.time)+' — seek">◉ '+formatTime(m.time)+'</button> ';
-  html+='<span class="timing-word" data-word="'+i+'">'+escapeHTML(w)+'<button class="word-time-add" data-word="'+i+'" title="Current audio time set करें">+</button></span> ';
- });
- box.innerHTML=html;
- box.querySelectorAll('.word-time-add').forEach(b=>{
-  b.addEventListener('click',e=>{
-   e.stopPropagation();
-   const wi=Number(b.dataset.word);
-   const existing=state.textTimingMarkers.find(m=>m.wordIndex===wi);
-   if(existing){existing.time=audio.currentTime;}
-   else {state.textTimingMarkers.push({id:'tm'+Date.now()+Math.random().toString(16).slice(2),wordIndex:wi,time:audio.currentTime});}
-   state.textTimingMarkers.sort((a,b)=>a.wordIndex-b.wordIndex);
-   renderTextTimingEditor();
-   saveWorkspaceSoon();
-   notify('Text Marker: '+formatTime(audio.currentTime));
-  });
- });
- box.querySelectorAll('.text-time-marker').forEach(b=>{
-  b.addEventListener('click',()=>{
-   const m=state.textTimingMarkers.find(x=>x.id===b.dataset.marker);
-   if(m){audio.currentTime=m.time;audio.play().catch(()=>{});syncTextTiming();}
-  });
- });
- $('timingMarkerInfo').textContent=state.textTimingMarkers.length+' marker(s) • Hover शब्द पर + क्लिक करें';
-}
-
-function syncTextTiming(){
- if(!state.textTimingActive||!state.textTimingText)return;
- const markers=[...state.textTimingMarkers].sort((a,b)=>a.time-b.time),t=audio.currentTime;
- let active=markers.filter(m=>m.time<=t+0.02).pop();if(!active){if(markers.length&&t<markers[0].time)active={wordIndex:0,time:0};else return}
- const startWord=active.wordIndex, next=markers.find(m=>m.time>t+0.02),endWord=next?next.wordIndex:timingWords().length;
- const words=timingWords().slice(startWord,endWord);$('canvasContent').innerHTML='<div class="question-kicker">✦ TEXT TIMING</div><div class="timing-playback-text">'+words.map(escapeHTML).join(' ')+'</div>';
- $('transportTitle').textContent='Text Timing Preview';$('transportSub').textContent=formatTime(active.time)+' • '+(next?formatTime(next.time):'अंत तक');$('presentation').classList.remove('answer-reveal');
-}
-
 function applyOrientation(mode){state.orientation=mode==='portrait'?'portrait':'landscape';$('canvasOrientation').value=state.orientation;$('previewWrap').classList.toggle('portrait-canvas',state.orientation==='portrait');$('presentation').classList.toggle('portrait-canvas',state.orientation==='portrait');canvasLayout.style.setProperty('grid-template-columns','12px minmax(260px,1fr) 12px minmax(100px,150px)','important');saveWorkspaceSoon();}
 function updatePlayButton(){$('playBtn').textContent=audio.paused?'▶':'Ⅱ'}
 function updateAudioUI(){const d=Number.isFinite(audio.duration)?audio.duration:0;$('timeDisplay').textContent=formatTime(audio.currentTime)+' / '+formatTime(d);$('seekBar').max=d||100;$('seekBar').value=d?audio.currentTime:0;updatePlayButton()}
@@ -119,10 +74,7 @@ function syncTick(){if(!audio.src||!$('autoSync').checked)return;const t=audio.c
  const ev=allEvents().filter(e=>e.time<=t+0.02);if(!ev.length)return;const target=ev[ev.length-1];if(target.index!==state.index||target.stage!==state.stage){state.index=target.index;state.stage=target.stage;render()}}
 function toggleFullscreen(){const target=$('previewWrap');if(!document.fullscreenElement)target.requestFullscreen?.().catch(()=>notify('Canvas fullscreen उपलब्ध नहीं है'));else document.exitFullscreen?.()}
 function togglePresentation(){state.presentationMode=!state.presentationMode;document.body.classList.toggle('presentation-mode',state.presentationMode);if(state.presentationMode&&!document.fullscreenElement)$('previewWrap').requestFullscreen?.().catch(()=>{});if(!state.presentationMode&&document.fullscreenElement)document.exitFullscreen?.()}
-$('renderTimingText').addEventListener('click',()=>{state.textTimingText=$('timingTextInput').value.trim();state.textTimingMarkers=[];state.textTimingActive=false;$('textTimingToggle').textContent='▶ Text Timing Preview OFF';renderTextTimingEditor();saveWorkspaceSoon();notify('Text editor तैयार')});
-$('timingTextInput').addEventListener('input',()=>{state.textTimingText=$('timingTextInput').value;saveWorkspaceSoon()});
-$('textTimingToggle').addEventListener('click',()=>{state.textTimingActive=!state.textTimingActive;$('textTimingToggle').textContent=state.textTimingActive?'✓ Text Timing Preview ON':'▶ Text Timing Preview OFF';if(state.textTimingActive)syncTextTiming();else render();saveWorkspaceSoon()});
-$('clearTextMarkers').addEventListener('click',()=>{state.textTimingMarkers=[];renderTextTimingEditor();saveWorkspaceSoon();notify('Markers clear कर दिए गए')});
+saveWorkspaceSoon();notify('Markers clear कर दिए गए')});
 $('loadBtn').addEventListener('click',()=>{const raw=$('questionInput').value;const ok=loadQuestions(raw);if(ok)saveWorkspaceSoon()});$('textFile').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const txt=await file.text();$('questionInput').value=txt;loadQuestions(txt)}catch(err){console.error(err);notify('File पढ़ नहीं पाए')}e.target.value=''});
 const audioInput=$('audioFile'),audioTrigger=$('audioFileTrigger');audioTrigger.addEventListener('click',()=>audioInput.click());audioTrigger.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();audioInput.click()}});audioInput.addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;try{if(state.audioUrl)URL.revokeObjectURL(state.audioUrl);state.audioBlob=file;state.audioUrl=URL.createObjectURL(file);audio.src=state.audioUrl;audio.load();$('audioName').textContent=file.name;notify('Continuous audio track loaded');saveWorkspaceSoon();updateAudioUI();if($('autoplay').checked)audio.play().then(updatePlayButton).catch(()=>notify('Audio playback के लिए Play दबाएँ'))}catch(err){console.error('Audio file setup failed',err);notify('Audio file load नहीं हो सकी')}e.target.value=''});
 $('prevBtn').addEventListener('click',()=>go(-1));$('nextBtn').addEventListener('click',()=>go(1));$('prevZone').addEventListener('click',()=>go(-1));$('nextZone').addEventListener('click',()=>go(1));
@@ -152,7 +104,7 @@ function moveResize(e){if(!resizing|| (activePointer!==null&&e.pointerId!==undef
 function stopResize(){if(!resizing)return;resizing=false;activeSplit=null;activePointer=null;leftSplit.classList.remove('dragging');rightSplit.classList.remove('dragging');}
 leftSplit.addEventListener('pointerdown',e=>startResize(e,'left'));rightSplit.addEventListener('pointerdown',e=>startResize(e,'right'));
 window.addEventListener('pointermove',moveResize);window.addEventListener('pointerup',stopResize);window.addEventListener('pointercancel',stopResize);
-audio.addEventListener('timeupdate',()=>{updateAudioUI();syncTick();syncTextTiming()});audio.addEventListener('loadedmetadata',updateAudioUI);audio.addEventListener('play',updatePlayButton);audio.addEventListener('pause',updatePlayButton);audio.addEventListener('ended',()=>{updatePlayButton();notify('Audio complete — Next से आगे बढ़ें')});$('seekBar').addEventListener('input',e=>{if(Number.isFinite(audio.duration)){audio.currentTime=Number(e.target.value);state.manualHold=false;syncTick()}});
+audio.addEventListener('timeupdate',()=>{updateAudioUI();syncTick()});audio.addEventListener('loadedmetadata',updateAudioUI);audio.addEventListener('play',updatePlayButton);audio.addEventListener('pause',updatePlayButton);audio.addEventListener('ended',()=>{updatePlayButton();notify('Audio complete — Next से आगे बढ़ें')});$('seekBar').addEventListener('input',e=>{if(Number.isFinite(audio.duration)){audio.currentTime=Number(e.target.value);state.manualHold=false;syncTick()}});
 document.addEventListener('keydown',e=>{const tag=document.activeElement?.tagName;if(tag==='TEXTAREA'||tag==='INPUT')return;if(e.key==='ArrowRight'){e.preventDefault();go(1)}if(e.key==='ArrowLeft'){e.preventDefault();go(-1)}if(e.code==='Space'){e.preventDefault();$('playBtn').click()}if(e.key.toLowerCase()==='f')toggleFullscreen();if(e.key==='Escape'&&state.presentationMode){state.presentationMode=false;document.body.classList.remove('presentation-mode')}});
 
 const sample='# भारत का संविधान कब लागू हुआ?\nA. 15 अगस्त 1947\nB. 26 जनवरी 1950\nC. 26 नवंबर 1949\nD. 2 अक्टूबर 1950\n\n# B\n\n# भारतीय संविधान 26 नवंबर 1949 को अंगीकृत किया गया था, लेकिन इसे 26 जनवरी 1950 को लागू किया गया।\n\n# भारतीय संविधान सभा के स्थायी अध्यक्ष कौन थे?\nA. डॉ. राजेंद्र प्रसाद\nB. जवाहरलाल नेहरू\nC. डॉ. भीमराव आंबेडकर\nD. सरदार पटेल\n\n# A\n\n# संविधान सभा के स्थायी अध्यक्ष डॉ. राजेंद्र प्रसाद थे।\n\n# भारत में मौलिक अधिकार किस भाग में दिए गए हैं?\nA. भाग I\nB. भाग II\nC. भाग III\nD. भाग IV\n\n# C\n\n# भारतीय संविधान के भाग III में अनुच्छेद 12 से 35 तक मौलिक अधिकार दिए गए हैं।\n\n# भारत के राष्ट्रपति का कार्यकाल कितने वर्ष का होता है?\nA. 4 वर्ष\nB. 5 वर्ष\nC. 6 वर्ष\nD. 7 वर्ष\n\n# B\n\n# राष्ट्रपति का कार्यकाल पाँच वर्ष का होता है।\n\n# संविधान में राज्य के नीति निदेशक तत्व किस भाग में हैं?\nA. भाग II\nB. भाग III\nC. भाग IV\nD. भाग V\n\n# C\n\n# राज्य के नीति निदेशक तत्व संविधान के भाग IV में अनुच्छेद 36 से 51 तक हैं।';$('questionInput').addEventListener('input',saveWorkspaceSoon);$('autoSync').addEventListener('change',saveWorkspaceSoon);$('autoplay').addEventListener('change',saveWorkspaceSoon);$('showProgress').addEventListener('change',saveWorkspaceSoon);restoreWorkspace().then(()=>{const raw=$('questionInput').value.trim();if(!raw||!loadQuestions(raw)){ $('questionInput').value=sample;loadQuestions(sample);saveWorkspace();}}).catch(err=>{console.error('Workspace startup failed',err);$('questionInput').value=sample;loadQuestions(sample);saveWorkspace();});
