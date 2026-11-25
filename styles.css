@@ -272,3 +272,9 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 .presentation .stage-options-reveal .option { clip-path:none!important; animation:mcqFinalBox .2s steps(1,end) both!important; }
 .presentation .stage-options-static .option { animation:none!important; }
 @media(prefers-reduced-motion:reduce){.presentation .question-text .mcq-char,.presentation .stage-options-reveal .option,.presentation .stage-options-reveal .option .mcq-char,.presentation .stage-explanation-reveal .mcq-char{animation:none!important;opacity:1!important;}}
+
+/* Non-destructive block/box wipe animation: text itself remains unwrapped */
+@keyframes mcqBlockWipe{0%{clip-path:inset(0 100% 0 0)}100%{clip-path:inset(0 0 0 0)}}
+.presentation.stage-enter .question-text.mcq-block-wipe,.presentation.stage-reveal .question-text.mcq-block-wipe,.presentation.stage-enter .explanation-text.mcq-block-wipe,.presentation.stage-reveal .explanation-text.mcq-block-wipe{clip-path:inset(0 100% 0 0)!important;animation:mcqBlockWipe .9s cubic-bezier(.2,.65,.25,1) both!important;}
+.presentation .stage-options-reveal .option.mcq-wipe-option{clip-path:inset(0 100% 0 0)!important;animation:mcqBlockWipe .7s cubic-bezier(.2,.65,.25,1) var(--wipe-delay,0s) both!important;opacity:1!important;transform:none!important;}
+@media(prefers-reduced-motion:reduce){.mcq-block-wipe,.mcq-wipe-option{clip-path:none!important;animation:none!important;}}
