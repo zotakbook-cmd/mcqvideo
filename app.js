@@ -43,7 +43,9 @@ function loadQuestions(raw){let parsed=[];try{parsed=parseQuestions(String(raw||
  state.questions=parsed;state.index=0;state.stage=0;state.hideInitial=true;state.lastAnimatedIndex=-1;state.timelineKey=fingerprint(raw);saveWorkspaceSoon();
  try{const saved=JSON.parse(localStorage.getItem(state.timelineKey)||'null');if(saved&&Array.isArray(saved))saved.forEach((ts,i)=>{if(parsed[i]&&Array.isArray(ts))parsed[i].timestamps=ts.map(v=>v===null?null:Number(v))})}catch{}
  $('questionCount').textContent=parsed.length+' QUESTIONS';$('transportTitle').textContent='Question set loaded';$('transportSub').textContent=parsed.length+' questions • '+parsed.length*4+' presentation stages';renderTimeline();render();notify(parsed.length+' questions loaded successfully');return true}
-function current(){return state.questions[state.index]}\nfunction segmentText(value){try{return Array.from(new Intl.Segmenter('hi',{granularity:'grapheme'}).segment(String(value)),x=>x.segment)}catch{return [...String(value)]}}\n
+function current(){return state.questions[state.index]}
+function segmentText(value){try{return Array.from(new Intl.Segmenter('hi',{granularity:'grapheme'}).segment(String(value)),x=>x.segment)}catch{return [...String(value)]}}
+
 function stageAbsolute(i,s){return i*4+s}
 function renderTimeline(){
  const box=$('timelinePanel');if(!box)return;
