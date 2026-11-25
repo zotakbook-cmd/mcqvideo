@@ -210,3 +210,10 @@ body.presentation-mode .preview-wrap.portrait-canvas{width:auto!important;max-wi
 /* Stable canvas layout: keep text anchored and animate only when question index changes */
 .canvas-content{justify-content:flex-start!important;padding-top:2.5%!important;}
 .question-kicker,.question-text,.options-grid .option,.option.correct,.answer-banner,.explanation-text{animation:none!important;}
+
+/* Stable positions; reveal animation only on elements newly introduced by stage */
+.canvas-content{justify-content:flex-start!important;padding-top:2.5%!important;}
+.question-text{animation:none!important;}
+.stage-enter .question-kicker,.stage-enter .question-text{animation:mcqTextIn .45s ease both!important;}
+.stage-enter .options-grid .option{animation:mcqOptionIn .4s ease both!important;}
+.stage-enter .explanation-text{animation:mcqExplain .45s ease both!important;}
