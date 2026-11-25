@@ -17,20 +17,20 @@ async function restoreWorkspace(){try{const saved=await dbGet('current');if(!sav
 function notify(m){const e=$('toast');e.textContent=m;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),2400)}
 function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function parseQuestions(raw){
- const text=String(raw||'').replace(/^\\uFEFF/,'').replace(/\\r/g,'').trim();
+ const text=String(raw||'').replace(/^\uFEFF/,'').replace(/\r/g,'').trim();
  if(!text)return [];
- const blocks=text.split(/(?:^|\\n)\\s*#\\s*/).map(v=>v.trim()).filter(Boolean);
+ const blocks=text.split(/(?:^|\n)\s*#\s*/).map(v=>v.trim()).filter(Boolean);
  const parsed=[];
- const opt=/^([A-D])[.)、:：-]\\s*(.+)$/i;
- const isQuestionBlock=b=>b.split(/\\n/).some(line=>opt.test(line.trim()));
+ const opt=/^([A-D])[.)、:：-]\s*(.+)$/i;
+ const isQuestionBlock=b=>b.split(/\n/).some(line=>opt.test(line.trim()));
  for(let i=0;i<blocks.length;){
   const qb=blocks[i++];
   if(!isQuestionBlock(qb))continue;
-  const lines=qb.split(/\\n/).map(v=>v.trim()).filter(Boolean);
+  const lines=qb.split(/\n/).map(v=>v.trim()).filter(Boolean);
   const options=lines.filter(v=>opt.test(v)).map(v=>{const m=v.match(opt);return {key:m[1].toUpperCase(),text:m[2].trim()}});
   const question=lines.filter(v=>!opt.test(v)).join(' ');
   const ab=blocks[i]||'';
-  const am=ab.match(/^(?:उत्तर|answer)?\\s*[:：-]?\\s*([A-D])\\s*$/i);
+  const am=ab.match(/^(?:उत्तर|answer)?\s*[:：-]?\s*([A-D])\s*$/i);
   if(!question||options.length<2||new Set(options.map(o=>o.key)).size!==options.length||!am){continue}
   const answer=am[1].toUpperCase();i++;
   let explanation='';
